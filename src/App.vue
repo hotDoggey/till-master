@@ -1,8 +1,9 @@
 <template>
-    <!-- prettier-ignore -->
+    <!-- prettier-ignore   -->
     <PageHeader logoPath="..\assets\logo.png" title="Name Of Site"/>
     <nav>
-        <router-link to="/">Home</router-link> | <router-link :to="{ name: 'about' }">About</router-link> |
+        <router-link to="/">Home</router-link> |
+        <router-link :to="{ name: 'about' }">About</router-link> |
         <router-link :to="{ name: 'jobs' }">Jobs</router-link>
     </nav>
     <button @click="redirect">Redirect</button>
