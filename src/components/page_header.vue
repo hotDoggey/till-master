@@ -1,23 +1,17 @@
 <template>
     <div class="top_ribon">
-        <img @click="print" alt="Logo" class="logo" :src="test" />
+        <img @click="print" alt="Logo" class="logo" src="@\assets\logo.png" />
         <h1 class="title">{{ title }}</h1>
     </div>
 </template>
 
 <script>
 export default {
-    props: [`logoPath`, `title`],
+    props: [`title`],
     data() {
-        return {
-            test: this.logoPath,
-        };
+        return {};
     },
-    methods: {
-        print() {
-            console.log(typeof this.test);
-        },
-    },
+    methods: {},
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <!-- prettier-ignore   -->
-    <PageHeader logoPath="..\assets\logo.png" title="Name Of Site"/>
+    <PageHeader title="Name Of Site"/>
     <nav>
         <router-link to="/">Home</router-link> |
         <router-link :to="{ name: 'about' }">About</router-link> |
@@ -10,7 +10,7 @@
     <button @click="back">Go Back</button>
     <button @click="forward">Go Forward</button>
 
-    <!-- router-view is where the content of each component page is displayed, as nav is separate it will always be shown at the top of all pages -->
+    <!-- router-view is where  the content of each component page is displayed, as nav is separate it will always be shown at the top of all pages -->
     <router-view />
 </template>
 
