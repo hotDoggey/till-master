@@ -3,12 +3,13 @@ import RootComponentApp from "./App.vue";
 import router from "./router";
 import PageHeader from "./components/PageHeader.vue"; 
 import PageFooter from "./components/PageFooter.vue"; 
+import store from "./store.js"; // Import the Vuex store
 import { library } from '@fortawesome/fontawesome-svg-core' // FontAwesome core
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome' /* FontAwesome component */
-import { faCarBurst, faCarOn, faUserCog, faUserSecret } from '@fortawesome/free-solid-svg-icons' /* FontAwesome import individual icons */
+import { faCarBurst, faCarOn, faUserCog, faUserSecret, faListOl } from '@fortawesome/free-solid-svg-icons' /* FontAwesome import individual icons */
 // import { fas } from '@fortawesome/free-solid-svg-icons' /* FontAwesome import all icons */
 
-library.add(faCarOn, faCarBurst) /* add individual icons to the library */
+library.add(faCarOn, faCarBurst, faListOl) /* add individual icons to the library */
 
 const app = createApp(RootComponentApp)
 
@@ -17,9 +18,11 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('PageHeader', PageHeader)
 app.component('PageFooter', PageFooter)
 
-
 // Add Router 
 app.use(router)
+
+// Use the Vuex store
+app.use(store);
 
 // Mount the app
 app.mount('#app')

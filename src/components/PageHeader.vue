@@ -1,7 +1,7 @@
 <template>
     <div class="top_ribon">
         <!-- prettier-ignore -->
-        <font-awesome-icon icon="fa-solid fa-car-burst" size="2xl" />
+        <font-awesome-icon icon="fa-solid fa-list-ol" size="2xl" />
 
         <!-- <img @click="print" alt="Logo" class="logo" src="@\assets\logo.png" /> -->
         <h1 class="title">{{ title }}</h1>

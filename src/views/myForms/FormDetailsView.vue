@@ -1,49 +1,46 @@
 <template>
+    <h1>Form Details Page</h1>
+    <p>Editing form: {{ id }}</p>
     <div class="main-content">
-        <h1>Form Details Page</h1>
-        <p>Editing form: {{ id }}</p>
-        <p>Editing form: {{ form.title }}</p>
-        <!-- <p>Editing form: {{ $route.params.formObj }}</p> -->
-
         <div class="left-container container" ref="left">
             <h3>Form Contents</h3>
         </div>
-        <div class="right-container container" ref="right"></div>
+        <div class="right-container container" ref="right">
+            <div v-if="!currently_editing">
+                <AddNewSectionBtn />
+            </div>
+            <div v-if="currently_editing">
+                <h3>Edit Section</h3>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import AddNewSectionBtn from "@/components/AddNewSectionBtn.vue";
+
 export default {
     name: "formDetails",
-    props: ["id", "form"],
+    components: {
+        AddNewSectionBtn,
+    },
+
+    props: ["id"],
     data() {
         return {
-            formContents: [
-                `<div class="form-section">
-                    <div class="section-element title">Forename:</div>
-                    <input class="section-element single-line-input"></input>
-                    <div class="section-element-controls">
-                        <button class="button edit-section-button">Edit ⇨</button>
-                        <button class="button delete-section-button">❌</button>
-                    </div>
-                </div>`,
-                `<div class="form-section">
-                    <div class="section-element title">Surname:</div>
-                    <input class="section-element single-line-input"></input>
-                    <div class="section-element-controls">
-                        <button class="button edit-section-button">Edit ⇨</button>
-                        <button class="button delete-section-button">❌</button>
-                    </div>
-                </div>`,
-            ],
+            currently_editing: undefined,
         };
     },
     mounted() {
-        console.log(this.form);
-        this.$refs.left.innerHTML += this.formContents[0];
-        this.$refs.left.innerHTML += this.formContents[1];
+        let form_in_store = this.$store.state.forms.find((obj) => this.id == obj.id);
+        this.$refs.left.innerHTML += form_in_store.formContents[0];
+        this.$refs.left.innerHTML += form_in_store.formContents[1];
         let right = this.$refs.right;
     },
+    methods: {
+        addSection(el) {},
+    },
+    components: { AddNewSectionBtn },
 };
 </script>
 

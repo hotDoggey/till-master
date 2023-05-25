@@ -5,7 +5,6 @@
             :to="{
                 name: 'formDetails',
                 params: { id: form.id },
-                props: { form: form },
             }"
         >
             <h2>{{ form.title }}</h2>
@@ -16,12 +15,17 @@
 export default {
     data() {
         return {
-            forms: [
-                { title: "Form 1", id: 1, details: "lorem" },
-                { title: "Form 2", id: 2, details: "lorem" },
-                { title: "Form 3", id: 3, details: "lorem" },
-            ],
+            // forms: [
+            //     { title: "Form 1", id: 1, details: "lorem" },
+            //     { title: "Form 2", id: 2, details: "lorem" },
+            //     { title: "Form 3", id: 3, details: "lorem" },
+            // ],
         };
+    },
+    computed: {
+        forms() {
+            return this.$store.state.forms; // Access the store state
+        },
     },
 };
 </script>

@@ -49,8 +49,12 @@ export default {
 button {
     margin: 0 10px;
     padding: 10px;
-    border: none;
+    border-width: 1px;
     border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #c9c3c3;
 }
 
 #app {

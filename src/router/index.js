@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import MyFormsView from "../views/myForms/MyFormsView.vue";
+import MyFormsView from "../views/myForms/AllFormsView.vue";
 import FormDetailsView from "../views/myForms/FormDetailsView.vue";
 import NotFound404 from "../views/NotFound404.vue";
 
