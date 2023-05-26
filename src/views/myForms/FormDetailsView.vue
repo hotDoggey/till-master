@@ -7,7 +7,7 @@
         </div>
         <div class="right-container container" ref="right">
             <div v-if="!currently_editing">
-                <AddNewSectionBtn />
+                <AddNewSectionBtn @addSection="addSection" />
             </div>
             <div v-if="currently_editing">
                 <h3>Edit Section</h3>
@@ -38,7 +38,9 @@ export default {
         let right = this.$refs.right;
     },
     methods: {
-        addSection(el) {},
+        addSection(type) {
+            console.log(type + `section was added`);
+        },
     },
     components: { AddNewSectionBtn },
 };

@@ -6,7 +6,9 @@
         <div ref="newSections">
             <button
                 v-for="(section, index) in availableSections"
+                @click="emitAddSection"
                 :key="index"
+                :value="section.type"
                 class="animated-div"
                 :style="addIncreasingDelay(index)"
             >
@@ -30,6 +32,9 @@ export default {
         },
     },
     methods: {
+        emitAddSection(e) {
+            this.$emit("addSection", e.target.value);
+        },
         addIncreasingDelay(index) {
             return { transitionDelay: `${0.1 * index}s` }; // s for seconds
         },
@@ -53,7 +58,7 @@ export default {
                     const buttonCenterX = button.left + button.width / 2;
                     const buttonCenterY = button.top + button.height / 2;
 
-                    const newX = button.left - window.innerWidth * 0.2; // (move them all 20% of page width to the left of the button)
+                    const newX = button.left - button.width * 2; // (move them all 20% of page width to the left of the button)
                     const newY =
                         button.top + window.innerHeight * 0.1 * i - window.innerHeight * 0.1; // offset to shift them up by 10% of page height
 
