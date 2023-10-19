@@ -1,32 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import MyFormsView from "../views/myForms/AllFormsView.vue";
-import FormDetailsView from "../views/myForms/FormDetailsView.vue";
 import NotFound404 from "../views/NotFound404.vue";
+// import ComponentsDump from "@/modules/small_components_dump/Module.vue";
 
 const routes = [
-    {
-        path: "/myforms",
-        name: "myform",
-        component: MyFormsView,
-    },
-    {
-        path: "/home",
-        name: "home",
-        component: HomeView,
-    },
-    {
-        path: "/form/:id",
-        name: "formDetails",
-        component: FormDetailsView, 
-        props: true, //Here, the props: true property tells Vue to automatically pass the route params as props to the FormDetails component.
-    },
-    // redirect if we change name or they enter wrong page address
-    {
-        path: "/all-forms", // path is what we are redirecting from
-        redirect: "/myforms",
-    },
+    // the rest of the views are found in the different modules
     // 404 catch all
+    { path: "/", redirect: "/till_main" },
     {
         path: "/:catchAll(.*)",
         name: "notFound404",

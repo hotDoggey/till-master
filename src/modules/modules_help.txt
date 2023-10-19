@@ -1,0 +1,8 @@
+HOW MODULES WORK:
+
+- in modules folder, each module has its own directory
+- within there there must be an index.js file, this is picked up by 
+the inport of the module in main.js
+- when index.js runs, it imports the router from within the module's files
+and returns it
+- the router is the one which initialises the actual module content

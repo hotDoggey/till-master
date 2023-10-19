@@ -1,34 +1,60 @@
 <template>
-    <div class="top_ribon">
-        <!-- prettier-ignore -->
-        <font-awesome-icon icon="fa-solid fa-list-ol" size="2xl" />
+    <v-toolbar class="toolbar">
+        <!-- Logged In User Details -->
+        <div class="user-details">
+            <div class="user-full-name">
+                Logged in as: <br />{{ loggedInUserFullName }} {{ loggedInUserId }}
+            </div>
+        </div>
+        <v-spacer></v-spacer>
 
-        <!-- <img @click="print" alt="Logo" class="logo" src="@\assets\logo.png" /> -->
-        <h1 class="title">{{ title }}</h1>
+        <!-- Title and Icon -->
+        <v-toolbar-title>
+            <router-link class="no-link-style" to="/till_main">
+                <font-awesome-icon icon="fa-solid fa-money-bill-1-wave" size="2xl" />
+                <h2 class="title">
+                    {{ title }}
+                </h2>
+            </router-link>
+        </v-toolbar-title>
 
-        <nav class="nav-links">
-            <!-- if not using the name example below, make sure to add a / as otehrwise it gets added to the address and if were in another path already it goes to wrong place -->
-            <router-link to="/myforms">My Forms</router-link> |
-            <router-link :to="{ name: 'home' }">Home</router-link>
-        </nav>
-    </div>
+        <!-- Navigation Links -->
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+            <nav class="nav-links">
+                <router-link to="/till_main">Till Home</router-link> |
+                <router-link to="/manage_users">Manage Users</router-link> |
+                <router-link to="/login">Login</router-link> |
+                <div class="logout">Log out</div>
+            </nav>
+        </v-toolbar-items>
+    </v-toolbar>
 </template>
 
 <script>
 export default {
-    props: [`title`],
+    props: [`title`, `loggedInUser`],
+    computed: {
+        loggedInUserFullName() {
+            const returnText = `${this.loggedInUser.forename} ${this.loggedInUser.surname}`;
+            return returnText;
+        },
+        loggedInUserId() {
+            return this.loggedInUser.id;
+        },
+    },
 };
 </script>
 
 <style scoped>
-.top_ribon {
+.top-ribon {
     display: flex;
     padding: 0pt 10pt 0pt 30pt;
     background: var(--primary-color);
-    color: whitesmoke;
+    color: var(--text-color);
+    align-items: center;
 }
-.top_ribon > * {
-    /* border: 15px solid orange;  <<< uncomment this to see effect of *star* */
+.top-ribon > * {
     /* border: 15px solid orange; */
     margin: 15px;
 }
@@ -39,21 +65,41 @@ img.logo {
 }
 .title {
     height: 40%;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin: auto;
 }
 nav {
     padding-top: auto;
 }
 nav a {
     font-weight: bold;
-    color: whitesmoke;
-}
-nav a.router-link-exact-active {
-    color: whitesmoke;
 }
 .nav-links {
     margin: auto;
-    margin-right: 3em;
+    margin-right: 3rem;
+}
+.logout {
+    font-weight: 1rem;
+    font-weight: bold;
+    display: inline-block;
+}
+.user-details {
+    font-weight: 1rem;
+    text-decoration: underline;
+    font-weight: bold;
+    display: block;
+    margin-left: 2rem;
+}
+.toolbar {
+    padding: 1.25rem;
+    color: var(--text-color) !important;
+}
+
+.nav-links * {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+nav a.router-link-exact-active {
+    color: rgb(238, 34, 34);
 }
 </style>
