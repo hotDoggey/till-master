@@ -1,12 +1,10 @@
 <template>
-    <!-- prettier-ignore   -->
-    <PageHeader title="Till Master" :loggedInUser="loggedInUser"/>
-    <!-- {forename:'David',surname:'Jones',id:1755864} -->
     <v-app>
+        <PageHeader title="Till Master" :loggedInUser="loggedInUser" />
         <!-- wrapping with a vuetify app tag -->
         <!-- router-view is where the content of each component page is displayed, 
             as nav is separate it will always be shown at the top of all pages -->
-        <router-view />
+        <router-view class="prevent-text-selection" />
     </v-app>
     <!-- <PageFooter
     id="page-footer"
@@ -16,33 +14,34 @@
 </template>
 
 <script>
+import { app as firebaseApp, auth } from "./mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
+
 export default {
     name: "App",
     components: {},
     data() {
         return {
-            loggedInUser: this.$store.state.loggedInUser,
+            /* FYI you can create a variable here and access it anywhere in the app with:
+            showScrollBar: false,
+            this.$root.setYScrollVisibilityTo(true) */
         };
     },
-    mounted() {},
+    created() {},
+    computed: {
+        loggedInUser() {
+            return this.$store.getters.loggedInUser;
+        },
+    },
     beforeDestroy() {},
     methods: {
-        redirect() {
-            this.$router.push({ name: "home" });
-        },
-        back() {
-            this.$router.go(-1);
-        },
-        forward() {
-            this.$router.go(1);
-        },
+        setYScrollVisibilityTo(bool) {},
     },
 };
 </script>
 
 <style>
 :root {
-    --primary-color: #dde0e3;
+    --primary-color: #646565;
     --primary-color-darker: hsl(from var(--primary-color) h s calc(l - 10%));
     --color-primary-darker: color-mix(in srgb, var(--primary-color), #000 60%);
     --secondary-color: #466b91;
@@ -52,7 +51,7 @@ export default {
     --btn-text-color-L: #dde0e3;
     --color-three: #e6dae8;
     --selected-color: #939292;
-    overflow-y: hidden; /* hide main scrollbar */
+    overflow-y: auto;
 }
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -61,7 +60,17 @@ export default {
     text-align: center;
     color: var(--text-color);
 }
-
+/* stop text selection on most things as its not needed in this type of application */
+.prevent-text-selection {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+.allow-text-selection {
+    -webkit-user-select: text !important; /* Safari */
+    -ms-user-select: text !important; /* IE 10 and IE 11 */
+    user-select: text !important; /* Standard syntax */
+}
 button {
     background-color: var(--secondary-color);
     margin: 0 10px;

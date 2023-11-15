@@ -73,7 +73,8 @@ export default {
                 tableId: this._selectedTableId,
                 createdTimestamp: currentTimeStr,
                 createdTimestampUTC: curretTimeUTC,
-                items: [
+                items: ["Gin", "Soda", "Lemonade", "Malibu", "Fries"], // TODO: remove once
+                items2: [
                     // TODO: make this an empty array to start with
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 1 },
@@ -83,7 +84,6 @@ export default {
                     { itemId: 123, quantity: 1 },
                 ],
             };
-            console.log("newTab: ", newTab);
 
             // create an entry in the vue store
             this.$store.commit("addTab", newTab);

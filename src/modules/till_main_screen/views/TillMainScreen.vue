@@ -3,13 +3,15 @@
         <!-- Open Tabs Container -->
         <div class="open-tabs-container visual-border">
             <!-- Open Tabs List -->
+            <h2 class="allow-text-selection">Open Tabs</h2>
+            <div class="tabs-list-container"></div>
             <v-list class="tabs-list">
                 <v-list-item
                     v-for="tab in dummyTabs"
                     :class="['mini-tab', { selectedTab: selectedTabId === tab.id }]"
                     :key="tab.id"
                     :title="'Table ' + tab.tableId + ' - ' + tab.createdTimestamp"
-                    :subtitle="itemsToStr(tab.items2)"
+                    :subtitle="itemsToStr(tab.items)"
                     @click="openTab(tab.id)"
                 ></v-list-item>
             </v-list>
@@ -22,7 +24,27 @@
 
         <!-- Right Main Container -->
         <div class="singe-tab-details">
-            <single-tab-view :selectedTabId="selectedTabId"></single-tab-view>
+            <single-tab-view :selectedTabId="selectedTabId">
+                <!-- remember you can use slots
+                <template v-slot:namedSlot>
+                    An image for example.
+                </template>
+                OR
+                <template #otherNamedSlot>
+                    Caption copntent
+                </template>
+                
+                In the component, the code will look like this:
+                <div>
+                    <slot name="namedSlot">
+                        <img src="some/url" />
+                    </slot>
+                </div>
+                <p>
+                    <slot name="otherNamedSlot"> </slot>
+                </p>
+            -->
+            </single-tab-view>
         </div>
     </div>
 
@@ -40,6 +62,11 @@
 import CreateTabPopup from "./CreateTabPopup.vue";
 import SingleTabView from "./SingleTabView.vue";
 export default {
+    mounted() {
+        // TODO: remember I made these globals, remove if not needed due to doing most of auth stuff in the store.js
+        // console.log("this.$firebaseApp: ", this.$firebaseApp);
+        // console.log("this.$firebaseAuth: ", this.$firebaseAuth);
+    },
     components: {
         CreateTabPopup,
         SingleTabView,
@@ -58,7 +85,7 @@ export default {
     },
     methods: {
         itemsToStr(items) {
-            console.log("why is this running??");
+            // console.log("why is this running??");
             // build array of item names
             let itemNamesArr = [];
             items.forEach((item) =>
@@ -86,6 +113,7 @@ export default {
 .page-container {
     display: flex;
     height: 800px;
+    overflow-y: hidden; /* hide main scrollbar */
 }
 
 /* Left Container */
@@ -125,6 +153,8 @@ export default {
 
 .create-tab-btn {
     margin: 0.5rem;
+    margin-bottom: 0.75rem;
+    min-height: 4rem;
     margin-top: 0;
     display: flex;
     justify-content: center; /* Horizontally center the content within the div */

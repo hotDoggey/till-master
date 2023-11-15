@@ -11,23 +11,32 @@
                         <div class="menu-item-price">{{ displayableStrFromPrice(item.price) }}</div>
                     </div>
                 </div>
+
+                <!-- numpad -->
+                <div class="numpad-container">
+                    <change-quantity-numpad
+                        v-if="showQuantityNumpad"
+                        @closeQuantityNumpad="showQuantityNumpad = false"
+                        :currentlySelectedDetails="{ currentTab, selectedItemId }"
+                    ></change-quantity-numpad>
+                </div>
             </div>
 
             <!-- Container2 -->
             <div class="container2 visual-border items-container">
-                <h2 class="container-title">Table {{ tabDataFromId.tableId }}</h2>
+                <h2 class="container-title">Table {{ currentTab.tableId }}</h2>
 
                 <div class="tab-items-list">
                     <!-- TODO: Make overflow-y work -->
                     <div
-                        v-for="item in tabDataFromId.items2"
+                        v-for="item in currentTab.items"
                         :key="item.itemId"
                         :class="[
                             'tab-item-row',
                             'pa-2',
                             { selectedItem: selectedItemId === item.itemId },
                         ]"
-                        @click="newSelected(item.itemId)"
+                        @click="newSelectedItemInTab(item.itemId)"
                     >
                         <div class="item-name">
                             {{ _menuItemNameFromId(item.itemId) }}
@@ -40,7 +49,7 @@
                     </div>
                 </div>
                 <v-spacer></v-spacer>
-                <div class="tab-total-text pb-2">Total: $43.88</div>
+                <div class="tab-total-text pb-2">Total: £{{ getTotalTabValue }}</div>
                 <!-- List of menu items on the current tab (price, quantity) -->
             </div>
         </div>
@@ -48,11 +57,15 @@
         <!-- Container3 -->
         <div class="container3 visual-border action-buttons">
             <!-- Change Qantity Button -->
-            <div class="action-btn" @click="createTabPopupOpen = true">
+            <div
+                class="action-btn"
+                @click="showQuantityNumpad = !showQuantityNumpad"
+                v-if="selectedItemId"
+            >
                 <font-awesome-icon class="icon-pad-right" icon="hashtag" />Change Quantity
             </div>
             <!-- Remove Selected Button -->
-            <div class="action-btn" @click="createTabPopupOpen = true">
+            <div class="action-btn" @click="removeItemFromTab" v-if="selectedItemId">
                 <font-awesome-icon class="icon-pad-right" icon="trash" />Remove Selected
             </div>
             <!-- Close Tab Button -->
@@ -64,8 +77,12 @@
 </template>
 
 <script>
+import ChangeQuantityNumpad from "./ChangeQuantityNumpad.vue";
 export default {
     props: ["selectedTabId"],
+    components: {
+        ChangeQuantityNumpad,
+    },
     // data() {
     //     return {
     //         selectedItemId: 12,
@@ -74,21 +91,38 @@ export default {
     data: function () {
         // make data a function, this allows you to get access to this. and therefore the store within here
         return {
-            selectedItemId: 12,
             menuItems: this.$store.state.menuItems,
+            showQuantityNumpad: false,
         };
     },
-
+    watch: {
+        // clicking to a new tab needs to reset the numpad popup
+        selectedItemId(newId, oldId) {
+            if (newId === 0) this.showQuantityNumpad = false;
+        },
+    },
     computed: {
+        selectedItemId() {
+            return this.$store.state.selectedItemId;
+        },
         // get the currently selected tab using the ID from the prop and by looking at the store
-        tabDataFromId() {
-            this.selectedItemId = 0; // reset the selected item once a new tab is opened or loaded
+        currentTab() {
+            this.newSelectedItemInTab(0); // reset the selected item once a new tab is opened or loaded
             return this.$store.getters.tabDetailsById(this.selectedTabId);
+        },
+        getTotalTabValue() {
+            let total = 0;
+            this.currentTab.items.forEach((item) => {
+                let price = this.$store.getters.menuItemPriceFromId(item.itemId);
+                total += price * item.quantity;
+            });
+            return total.toFixed(2);
         },
     },
     methods: {
-        newSelected(newId) {
-            this.selectedItemId = newId;
+        newSelectedItemInTab(newId) {
+            this.showQuantityNumpad = false;
+            this.$store.commit("setSelectedItemId", newId);
         },
         _menuItemNameFromId(id) {
             return this.$store.getters.menuItemNameFromId(id);
@@ -98,6 +132,23 @@ export default {
         },
         _menuItemPriceFromId(id) {
             return this.$store.getters.menuItemPriceFromId(id);
+        },
+        // Remove an item from tab
+        removeItemFromTab() {
+            // check an item is actually selected
+            if (this.selectedItemId) {
+                let payload = {
+                    tabId: this.selectedTabId,
+                    itemId: this.selectedItemId,
+                    newQuantity: 0,
+                };
+                console.log("payload: ", payload);
+                // store mutation (commit) changeItemQuantity
+                this.$store.commit("changeItemQuantity", payload);
+
+                // end with clearing the selected item
+                this.newSelectedItemInTab(0);
+            }
         },
     },
 };
@@ -122,6 +173,7 @@ export default {
 .container1 {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 .menu-items-container {
     display: grid;
@@ -161,12 +213,9 @@ export default {
 }
 .menu-item-img {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
     height: 100%;
-    filter: brightness(50%) opacity(0.5);
+    min-width: 100%;
+    filter: brightness(50%) opacity(0.35) blur(0px);
     z-index: 0;
 }
 
@@ -176,8 +225,17 @@ export default {
     z-index: 1; /* Ensure text is on top of the image */
     font-size: 1.19rem;
     text-align: center; /* Center the text horizontally */
-    color: black; /* Set the color for better readability */
+    font-weight: bold;
+    color: rgb(0, 0, 0); /* Set the color for better readability */
     padding: 0 10px; /* Add some padding to the text for better visibility */
+}
+
+.numpad-container {
+    width: 340px;
+    height: 365px; /* 70 is entry field, each box below is 85 in 4x3 grid form*/
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 /* Items Container 2 */

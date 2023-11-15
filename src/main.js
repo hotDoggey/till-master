@@ -5,13 +5,15 @@ import store from "./store.js"; // Import the Vuex store
 import PageHeader from "./components/PageHeader.vue";
 import PageFooter from "./components/PageFooter.vue";
 import { FontAwesomeIcon } from "./mainjsHelpers/FontAwesomeSetup"; // Import from the FontAwesomeSetup module
+import { firebaseApp, firebaseAuth } from "./mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
+import userIsLoggedInMixin from "./mainjsHelpers/userIsLoggedInMixin.js";
 
 //-- <MODULES> --//
 // giving just the folder will automatically find and exec the index.js
 import till_main_screenModule from "./modules/till_main_screen";
 import manage_users_page_module from "./modules/manage_users_page";
 import login_screen_module from "./modules/login_screen";
-import Blank_module_dont_modify from "./modules/Blank_module_dont_modify";
+import Blank_module_dont_modify from "./modules/2Blank_module_dont_modify";
 
 // register modules utility function:
 import { registerModules } from "./register-modules";
@@ -39,6 +41,10 @@ const vuetify = createVuetify({
 
 const app = createApp(RootComponentApp);
 
+// Adding a global function/object to the Vue prototype, this is accessible anywhere in the rest of the app and components using this.$xxx
+app.config.globalProperties.$firebaseApp = firebaseApp;
+app.config.globalProperties.$firebaseAuth = firebaseAuth;
+
 // Add golobal components to the app before mounting it
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("PageHeader", PageHeader);
@@ -53,35 +59,33 @@ app.use(vuetify);
 // Use the Vuex store
 app.use(store);
 
-// Mount the app
-app.mount("#app");
+// loggedInState mixin for visibility - now available as plain property for easy access in all components
+app.mixin(userIsLoggedInMixin);
+
+// Mount the app, prob dont need to assign to vm variable
+const vm = app.mount("#app");
 
 // MY GLOBAL COMPONENTS
 /* <PageHeader title="Name Of Site"/> */
 /* <font-awesome-icon icon="icon-name" size="lg" color="#f00" /> */
 
-// firebase code:
+// another way to make an object usable elsewhere is to export it from here
+// and import it and use as is within another section of the app
 
-// npm install firebase
+// export const router = new VueRouter({
+//     mode: 'hash',
+//     base: "./",
+//     routes: [
+//         { path: "/", component: welcome},
+//         { path: "/welcome", component: welcome},
 
-// // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
+//     ]
+// })
 
-// // Your web app's Firebase configuration
-// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: "AIzaSyA8zWUKjmu7mL_cW8t9sM5S6ZJhMDdik3s",
-//   authDomain: "till-manager.firebaseapp.com",
-//   projectId: "till-manager",
-//   storageBucket: "till-manager.appspot.com",
-//   messagingSenderId: "1050796441026",
-//   appId: "1:1050796441026:web:ed46cbd835e89ccc0e6a5b",
-//   measurementId: "G-PZVRX7QVYM"
-// };
+// Within the other place in the application, import and use as normal
+// import {router} from "../main.js"
 
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+// export const someAction = ({commit}) => {
+
+//     router.push("/welcome");
+// }

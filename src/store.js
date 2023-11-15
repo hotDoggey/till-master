@@ -1,4 +1,10 @@
 import { createStore } from "vuex";
+import { firebaseApp } from "./mainjsHelpers/FirestoreSetup";
+import {
+    firebaseAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+} from "./mainjsHelpers/FirestoreSetup";
 
 export default createStore({
     state: {
@@ -7,7 +13,7 @@ export default createStore({
                 id: 213,
                 tableId: 2,
                 createdTimestamp: "16:46 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 128, quantity: 12 },
                     { itemId: 129, quantity: 1 },
                     { itemId: 127, quantity: 1 },
@@ -22,7 +28,7 @@ export default createStore({
                 id: 352,
                 tableId: 3,
                 createdTimestamp: "18:45 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 1 },
                     { itemId: 125, quantity: 7 },
@@ -35,7 +41,7 @@ export default createStore({
                 id: 353,
                 tableId: 3,
                 createdTimestamp: "18:46 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 1 },
                     { itemId: 131, quantity: 8 },
@@ -48,7 +54,7 @@ export default createStore({
                 id: 354,
                 tableId: 4,
                 createdTimestamp: "18:47 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 131, quantity: 1 },
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 5 },
@@ -61,7 +67,7 @@ export default createStore({
                 id: 355,
                 tableId: 4,
                 createdTimestamp: "18:48 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 1 },
                     { itemId: 131, quantity: 1 },
@@ -74,7 +80,7 @@ export default createStore({
             //     id: 356,
             //     tableId: 4,
             //     createdTimestamp: "18:46 10/10/2023",
-            //     items2: [
+            //     items: [
             //         { itemId: 126, quantity: 1 },
             //         { itemId: 127, quantity: 1 },
             //         { itemId: 125, quantity: 1 },
@@ -87,7 +93,7 @@ export default createStore({
             //     id: 357,
             //     tableId: 4,
             //     createdTimestamp: "18:46 10/10/2023",
-            //     items2: [
+            //     items: [
             //         { itemId: 126, quantity: 1 },
             //         { itemId: 127, quantity: 1 },
             //         { itemId: 125, quantity: 1 },
@@ -100,7 +106,7 @@ export default createStore({
             //     id: 358,
             //     tableId: 1,
             //     createdTimestamp: "18:46 10/10/2023",
-            //     items2: [
+            //     items: [
             //         { itemId: 126, quantity: 1 },
             //         { itemId: 127, quantity: 1 },
             //         { itemId: 124, quantity: 2 },
@@ -113,7 +119,7 @@ export default createStore({
                 id: 359,
                 tableId: 1,
                 createdTimestamp: "18:46 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 126, quantity: 1 },
                     { itemId: 124, quantity: 2 },
                     { itemId: 127, quantity: 1 },
@@ -126,7 +132,7 @@ export default createStore({
                 id: 360,
                 tableId: 1,
                 createdTimestamp: "18:46 10/10/2023",
-                items2: [
+                items: [
                     { itemId: 124, quantity: 2 },
                     { itemId: 126, quantity: 1 },
                     { itemId: 127, quantity: 1 },
@@ -136,15 +142,43 @@ export default createStore({
                 ],
             },
         },
+        // to test logging in comment out below details and leave as empty {}
         loggedInUser: {
-            id: 32565212,
-            ownedTabs: [355, 356, 357],
-            openTabs: [355, 356],
-            forename: "David",
-            surname: "Jones",
-            role: "admin-8846217777",
-            dateCreated: "09/10/23",
+            customData: {
+                ownedTabs: [355, 356, 357],
+                openTabs: [355, 356],
+                forename: "David",
+                surname: "Jones",
+                role: "admin",
+            },
+            uid: "DUimqnbJbMY9SSzKhhyYcZMYke73",
+            email: "biser951+firetest12@gmail.com",
+            emailVerified: false,
+            isAnonymous: false,
+            providerData: [
+                {
+                    providerId: "password",
+                    uid: "biser951+firetest12@gmail.com",
+                    displayName: null,
+                    email: "biser951+firetest12@gmail.com",
+                    phoneNumber: null,
+                    photoURL: null,
+                },
+            ],
+            stsTokenManager: {
+                refreshToken:
+                    "AMf-vBxdSGDshhMwllbu_vQG2xm4zfdhU60JGuagCdyLuA0emLwtkD9KdTSLs_amLeBLRA4vC1s06EDd_sCiKUsTynzSanAhvgeTRDJtyY3CBNQ9t0-CpIVQ7XuZXykaglfcgENFz3iLJT8w-sobKJIvGW-wUvo9Xw0V5oYawi_xCU9uxb5qWGiEwY0TVsTqHrVUCXbxCrWIRzJw6nfDgVCp66Hhb_9zIg",
+                accessToken:
+                    "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAzZDA3YmJjM2Q3NWM2OTQyNzUxMGY2MTc0ZWIyZjE2NTQ3ZDRhN2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdGlsbC1tYW5hZ2VyIiwiYXVkIjoidGlsbC1tYW5hZ2VyIiwiYXV0aF90aW1lIjoxNjk4MTU4ODkwLCJ1c2VyX2lkIjoiRFVpbXFuYkpiTVk5U1N6S2hoeVljWk1Za2U3MyIsInN1YiI6IkRVaW1xbmJKYk1ZOVNTektoaHlZY1pNWWtlNzMiLCJpYXQiOjE2OTgxNTg4OTAsImV4cCI6MTY5ODE2MjQ5MCwiZW1haWwiOiJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.tIFAMZ0F0_Q_KDzAgiO4t1OeJXL2NBjIHz8rpRcijlgcpm9_8NFsRs7jH8xJ4Y7QEAxwPb2u1HIMyrnt3opUszZyPSt_rM_5Cujr9U2X8s4qRaoj6c-EQCK-eNCMGf61w2yl1B44gfmue5Ha6rbYhdIQXIM9GTOjzG-jOD2u9eIr-iFiN876Ayt4nOR6g1j3dQE7PBXt67R08QcIh2sAtNxlGsdOVUdAmCPjAdRmBdCYVATtRxZMaDb2pzAxu21S5HGb6wbyeHqKfwhXli2n73H1CPMDUR_aF5KSKc3vU3s9J3soHERGugAl2uUpxKJR5NG48APmh85HXjn8L33HHw",
+                expirationTime: 1698162490747,
+            },
+            createdAt: "1698158890732",
+            lastLoginAt: "1698158890732",
+            apiKey: "AIzaSyA8zWUKjmu7mL_cW8t9sM5S6ZJhMDdik3s",
+            appName: "[DEFAULT]",
         },
+        allUsers: [],
+        allUsersDetails: [],
         availableTables: [
             { tableId: 1, tableNumber: 1 },
             { tableId: 2, tableNumber: 2 },
@@ -224,25 +258,164 @@ export default createStore({
                     "https://www.shutterstock.com/image-illustration/cider-bottle-apple-fruit-sketch-260nw-1560922523.jpg",
             },
         ],
+        selectedTabId: 0,
+        selectedItemId: 0,
+        isLoading: false,
+        error: null,
     },
     getters: {
-        tabDetailsById: (state) => (id) => state.dummyTabs[id], // confusing way of writing that (with two =>) but thats how it works
+        // Get tab details by id from state
+        tabDetailsById: (state) => (id) => state.dummyTabs[id], // confusing way of writing that (with two =>) but that's how it works
+
+        // Get table number by id from state
         tableNumberFromId: (state) => (id) =>
             state.availableTables.find((x) => x.tableId === Number(id)).tableNumber,
+
+        // Get menu item name by id from state
         menuItemNameFromId: (state) => (id) => state.menuItems.find((x) => x.itemId === id).name,
+        // Get menu item price by id from state
         menuItemPriceFromId: (state) => (id) => state.menuItems.find((x) => x.itemId === id).price,
+
+        // Get logged in user obj
+        loggedInUser: (state) => state.loggedInUser,
+
+        // return true or false based on if a user is logged in (used for navigation visibility )
+        loggedInState: (state) => !!state.loggedInUser?.uid,
     },
+    // Mutations: Commit things to the store
     mutations: {
-        incrementUniqueSectionId: (state) => state.currentUniqueSectionId++,
-        addTab: (state, tab) => {
-            state.dummyTabs[tab.id] = tab;
+        // Add a tab to state
+        addTab: (state, tab) => (state.dummyTabs[tab.id] = tab),
+        setLoggedInUser: (state, user) => {
+            state.loggedInUser = user;
         },
+        // Add a user to firestore
+        addUserToAllUsers: (state, user) => {
+            state.allUsers.push(user);
+        },
+        addUserDetails: (state, additionalDetails) => {
+            state.allUsersDetails.push(additionalDetails);
+        },
+        // Set loggedInUser to an empty object
+        logUserOut: (state) => (state.loggedInUser = {}),
+        setLoading: (state, payload) => (state.isLoading = payload),
+        setError: (state, payload) => (state.error = payload),
+        clearError: (state) => (state.error = null),
+
+        // change quantity of an item in a tab (zero will remove it)
+        changeItemQuantity: (state, payload) => {
+            let tabId = payload.tabId;
+            let itemId = payload.itemId;
+            let newQuantity = payload.newQuantity;
+
+            let tab = state.dummyTabs[payload.tabId];
+
+            // delete item if zero
+            if (payload.newQuantity === 0) {
+                tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
+                state.selectedItemId = 0; // clear selected item id if its been deleted
+            }
+            //change to new quant
+            else if (payload.newQuantity > 0) {
+                // change quantity
+                let item = tab.items.find((item) => item.itemId === payload.itemId);
+                item.quantity = payload.newQuantity;
+            } else {
+                // Set error message
+                state.error = "Invalid value passed to changeItemQuantity() mutation";
+            }
+        },
+
+        // Set selectedItemId to new val
+        setSelectedItemId: (state, newId) => (state.selectedItemId = newId),
     },
+    // Actions: perform operations such as async api calls etc.
     actions: {
-        giveMeNewUniqueSectionId: ({ commit, state }) => {
-            commit("incrementUniqueSectionId");
-            console.log(state.currentUniqueSectionId);
-            return state.currentUniqueSectionId;
+        // Action to create a user in firestore
+        createUser: async ({ commit, state }, payload) => {
+            console.log("in craeteUser Action, payload is: ", payload);
+
+            // begin loading spinner
+            commit("setLoading", true);
+
+            let result;
+            // add to firestore using the firebaseAuth defined in mainjs
+            await createUserWithEmailAndPassword(
+                firebaseAuth,
+                payload.newUsername,
+                payload.newPassword
+            )
+                .then((userCredential) => {
+                    // stop loading spinner
+                    commit("setLoading", false);
+
+                    // Sign up SUCCESSFUL
+                    const user = userCredential.user;
+
+                    // Add user to all users array
+                    commit("addUserToAllUsers", user);
+
+                    // Add additional details about the user to the separate array
+                    let additionalDetails = {
+                        uid: user.uid,
+                        ownedTabs: [],
+                        openTabs: [],
+                        forename: payload.newForename,
+                        surname: payload.newSurname,
+                        role: payload.newRole,
+                        dateCreated: user.createdAt,
+                    };
+                    commit("addUserDetails", additionalDetails); // later this will change to go to the database as well so we store it
+                    console.log("stored allUsers: ", state.allUsers);
+                    result = "Created user successfully!";
+                })
+                .catch((error) => {
+                    // stop loading spinner
+                    commit("setLoading", false);
+
+                    // Sign up UNSUCCESSFUL
+                    const errorCode = error.code;
+                    if (errorCode === "auth/email-already-in-use")
+                        result = "User with this email already exists, no user was created.";
+
+                    // save error message to error property in store
+                    commit("setError", result);
+
+                    const errorMessage = error.message;
+                    console.log("errorMessage :", errorMessage);
+                    result = `Other Error: ${errorCode}`;
+                });
+            return result;
+        },
+        signUserIn: async ({ commit }, payload) => {
+            let result;
+
+            // begin loading spinner
+            commit("setLoading", true);
+            await signInWithEmailAndPassword(firebaseAuth, payload.username, payload.password)
+                .then((userCredential) => {
+                    // stop loading spinner
+                    commit("setLoading", false);
+
+                    const user = userCredential.user;
+                    console.log("user as returned from firestore signin method: ", user);
+                    commit("setLoggedInUser", user);
+                    result = `Logged in successfully with account ${user.email}`;
+                })
+                .catch((error) => {
+                    // stop loading spinner
+                    commit("setLoading", false);
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log("errorCode: ", errorCode);
+                    console.log("errorMessage: ", errorMessage);
+                    result = errorMessage;
+
+                    // save error message to error property in store
+                    commit("setError", result);
+                });
+
+            return result;
         },
     },
 

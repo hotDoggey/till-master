@@ -1,15 +1,17 @@
 <template>
     <v-toolbar class="toolbar">
         <!-- Logged In User Details -->
-        <div class="user-details">
-            <div class="user-full-name">
-                Logged in as: <br />{{ loggedInUserFullName }} {{ loggedInUserId }}
+        <div class="user-details" v-if="userIsLoggedIn">
+            <div class="lia-text">Logged in as: <br /></div>
+            <div class="user-email">
+                {{ loggedInUserEmail }}<br />
+                <!-- Logged in as: <br />David Jones 184678430 <br /> -->
+                <!-- Logged in as: <br />{{ loggedInUserFullName }} {{ loggedInUserId }} -->
             </div>
         </div>
-        <v-spacer></v-spacer>
 
         <!-- Title and Icon -->
-        <v-toolbar-title>
+        <v-toolbar-title class="title-and-icon">
             <router-link class="no-link-style" to="/till_main">
                 <font-awesome-icon icon="fa-solid fa-money-bill-1-wave" size="2xl" />
                 <h2 class="title">
@@ -19,13 +21,12 @@
         </v-toolbar-title>
 
         <!-- Navigation Links -->
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
+        <v-toolbar-items class="navigation" v-if="userIsLoggedIn">
             <nav class="nav-links">
-                <router-link to="/till_main">Till Home</router-link> |
-                <router-link to="/manage_users">Manage Users</router-link> |
-                <router-link to="/login">Login</router-link> |
-                <div class="logout">Log out</div>
+                <router-link to="/till_main">Till Home | </router-link>
+                <router-link to="/manage_users">Manage Users | </router-link>
+                <!-- <router-link to="/login" v-if="!userIsLoggedIn">Login</router-link> -->
+                <div class="logout" @click="logOut">Log out</div>
             </nav>
         </v-toolbar-items>
     </v-toolbar>
@@ -34,19 +35,35 @@
 <script>
 export default {
     props: [`title`, `loggedInUser`],
+    data() {
+        return {};
+    },
     computed: {
         loggedInUserFullName() {
-            const returnText = `${this.loggedInUser.forename} ${this.loggedInUser.surname}`;
+            const returnText = `${this.loggedInUser.customData.forename} ${this.loggedInUser.customData.surname}`;
             return returnText;
         },
         loggedInUserId() {
-            return this.loggedInUser.id;
+            return this.loggedInUser.createdAt;
+        },
+        loggedInUserEmail() {
+            return this.loggedInUser.email;
+        },
+    },
+    methods: {
+        logOut() {
+            this.$store.commit("logUserOut");
+            this.$router.push("login");
         },
     },
 };
 </script>
 
 <style scoped>
+.toolbar {
+    padding: 1.25rem;
+    color: var(--text-color) !important;
+}
 .top-ribon {
     display: flex;
     padding: 0pt 10pt 0pt 30pt;
@@ -58,6 +75,14 @@ export default {
     /* border: 15px solid orange; */
     margin: 15px;
 }
+
+.user-details {
+    font-weight: 1rem;
+    font-weight: bold;
+    display: block;
+    margin-left: 2rem;
+}
+
 img.logo {
     height: 35px;
     width: 35px;
@@ -67,33 +92,16 @@ img.logo {
     height: 40%;
     margin: auto;
 }
-nav {
-    padding-top: auto;
-}
-nav a {
-    font-weight: bold;
-}
+/* .title-and-icon {
+    position: absolute;
+
+    transform: translateX(100%);
+} */
+
 .nav-links {
     margin: auto;
-    margin-right: 3rem;
+    padding-right: 1rem;
 }
-.logout {
-    font-weight: 1rem;
-    font-weight: bold;
-    display: inline-block;
-}
-.user-details {
-    font-weight: 1rem;
-    text-decoration: underline;
-    font-weight: bold;
-    display: block;
-    margin-left: 2rem;
-}
-.toolbar {
-    padding: 1.25rem;
-    color: var(--text-color) !important;
-}
-
 .nav-links * {
     text-decoration: none;
     color: var(--text-color);
@@ -101,5 +109,17 @@ nav a {
 
 nav a.router-link-exact-active {
     color: rgb(238, 34, 34);
+}
+nav {
+    padding-top: auto;
+}
+nav a {
+    font-weight: bold;
+}
+.logout {
+    font-weight: 1rem;
+    font-weight: bold;
+    display: inline-block;
+    cursor: pointer;
 }
 </style>

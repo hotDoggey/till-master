@@ -1,23 +1,39 @@
 <template>
-    <v-form action="submit" class="login-form">
-        <v-text-field
-            class="max-width"
-            v-model="username"
-            :rules="usernameRules"
-            label="Username"
-        ></v-text-field>
-        <v-text-field
-            class="max-width"
-            v-model="password"
-            :rules="passwordRules"
-            label="Password"
-            required
-        ></v-text-field>
+    <h1 class="pt-16">Login</h1>
 
-        <div class="input-group login-btn">
-            <v-btn type="submit" block class="mt-2">Login</v-btn>
-        </div>
-    </v-form>
+    <v-container>
+        <v-row align="center" justify="center">
+            <v-col cols="12" sm="8" md="6" lg="6" class="pt-12 v-col-custom">
+                <v-form action="submit" @submit.prevent="attemptLogin" class="login-form">
+                    <v-text-field
+                        v-model="username"
+                        :rules="[(v) => !!v || 'You must enter a Username.']"
+                        label="Username"
+                        required
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="password"
+                        type="password"
+                        :rules="[(v) => !!v || 'You must enter a Password.']"
+                        label="Password"
+                        required
+                    ></v-text-field>
+
+                    <div class="text-center">
+                        <v-btn type="submit" class="mt-6 login-btn">Login</v-btn>
+                    </div>
+                </v-form>
+            </v-col>
+        </v-row>
+    </v-container>
+
+    <div class="hint-text">
+        <p>Demo version. Use the following details to login and view the rest of the system:</p>
+        <p>Username: test_admin_user123@example.com</p>
+        <p>Password: 123456</p>
+        <p></p>
+    </div>
+    <div v-if="isLoading">Loading...</div>
 </template>
 
 <script>
@@ -26,65 +42,42 @@ export default {
         return {
             username: "",
             password: "",
-            usernameRules: [
-                (value) => {
-                    if (value) return true;
-                    return "You must enter a Username.";
-                },
-            ],
-            passwordRules: [
-                (value) => {
-                    if (value) return true;
-                    return "You must enter a password.";
-                },
-            ],
         };
     },
+    computed: {
+        isLoading() {
+            return this.$store.state.isLoading;
+        },
+    },
     mounted() {},
+    methods: {
+        async attemptLogin() {
+            // create a payload object with entered information on form
+            let payload = {
+                username: this.username,
+                password: this.password,
+            };
+
+            // when adding the spinner i will prob have to use the promise it returns with a race thing to time out after x seconds
+            let result = await this.$store.dispatch("signUserIn", payload);
+            console.log("result within loginpage.vue!: ", result);
+            this.$router.push({ name: "till_main" });
+        },
+    },
 };
 </script>
 
 <style>
 .login-form {
-    font-family: Arial, Helvetica, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: 3rem 35rem 0 35rem;
-}
-
-.max-width {
-    text-align: left; /* Left-align labels */
-    width: 100%; /* Make input fields full width */
-    margin-bottom: 15px; /* add apacing between field vertically */
-}
-.input-group {
-    width: 100%; /* Make input fields full width */
-    text-align: left; /* Left-align labels */
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-input[type="text"],
-input[type="password"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border: 1px solid var(--primary-color);
-    border-radius: 3px;
-    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
 }
-
 .login-btn {
-    color: var(--btn-text-color-L);
-    border: none;
-    border-radius: 3px;
-    font-size: 1rem;
-    padding: 1rem 1rem;
+    width: 100%; /* Adjust the width as needed */
+    margin: 0 auto; /* center the button */
+}
+.hint-text {
+    padding-top: 6rem;
+    color: rgb(196, 196, 197);
 }
 </style>
