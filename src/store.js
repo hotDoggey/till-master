@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
-import { firebaseApp } from "./mainjsHelpers/FirestoreSetup";
 import {
+    firestoreDB,
+    tabs,
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -281,6 +282,9 @@ export default createStore({
 
         // return true or false based on if a user is logged in (used for navigation visibility )
         loggedInState: (state) => !!state.loggedInUser?.uid,
+
+        // return current error message
+        error: (state) => state.error,
     },
     // Mutations: Commit things to the store
     mutations: {
@@ -304,10 +308,9 @@ export default createStore({
 
         // change quantity of an item in a tab (zero will remove it)
         changeItemQuantity: (state, payload) => {
-            let tabId = payload.tabId;
-            let itemId = payload.itemId;
-            let newQuantity = payload.newQuantity;
+            console.log("tabs: ", tabs);
 
+            // find the tab we are editing
             let tab = state.dummyTabs[payload.tabId];
 
             // delete item if zero
@@ -325,6 +328,15 @@ export default createStore({
                 state.error = "Invalid value passed to changeItemQuantity() mutation";
             }
         },
+        // add an item to the tab (when menu item is clicked)
+        addItemToTab: (state, payload) => {
+            // find the tab we are editing
+            console.log("payload.tabId: ", payload.tabId);
+            let tab = state.dummyTabs[payload.tabId];
+
+            // add the item to that tab's items list
+            tab.items.push(payload.item);
+        },
 
         // Set selectedItemId to new val
         setSelectedItemId: (state, newId) => (state.selectedItemId = newId),
@@ -337,6 +349,9 @@ export default createStore({
 
             // begin loading spinner
             commit("setLoading", true);
+
+            // clear error
+            commit("clearError");
 
             let result;
             // add to firestore using the firebaseAuth defined in mainjs
@@ -367,23 +382,15 @@ export default createStore({
                     };
                     commit("addUserDetails", additionalDetails); // later this will change to go to the database as well so we store it
                     console.log("stored allUsers: ", state.allUsers);
-                    result = "Created user successfully!";
+                    result = true;
                 })
                 .catch((error) => {
                     // stop loading spinner
                     commit("setLoading", false);
 
-                    // Sign up UNSUCCESSFUL
-                    const errorCode = error.code;
-                    if (errorCode === "auth/email-already-in-use")
-                        result = "User with this email already exists, no user was created.";
-
                     // save error message to error property in store
-                    commit("setError", result);
-
-                    const errorMessage = error.message;
-                    console.log("errorMessage :", errorMessage);
-                    result = `Other Error: ${errorCode}`;
+                    commit("setError", error.message);
+                    result = null;
                 });
             return result;
         },

@@ -30,7 +30,8 @@
                 <div v-if="x < 10" class="number-btn btn" @click="numberPressed(x)">
                     {{ x }}
                 </div>
-                <div v-else-if="x === 10" class="action-btn btn">0</div>
+
+                <div v-else-if="x === 10" class="action-btn btn" @click="onZeroLogic">0</div>
                 <!-- backspace button -->
                 <div v-else-if="x === 11" class="action-btn btn" @click="onBackspace">&lt=</div>
                 <!-- enter button -->
@@ -70,13 +71,6 @@ export default {
             this.newQuantity = Number(newVal);
         },
     },
-    computed: {
-        newQuantity2() {
-            let regex = /\D/;
-            console.log(regex.test(this.newQuantity));
-            return;
-        },
-    },
     methods: {
         focusAndSelect() {
             // Use nextTick to wait for the next DOM update cycle - had to do this as the above was apparently being slow and the code below ran before it was finished initialising the data, which then made the select function not work
@@ -92,6 +86,15 @@ export default {
                 this.newQuantity = number;
             } else {
                 this.newQuantity = this.newQuantity + "" + number; // I could convert to Number() here but the watcher will do this anyway
+            }
+        },
+        onZeroLogic() {
+            if (this.initiallyOpened) {
+                // update variable that dictates if the number is selected and replaced on first opening of numpad (for convenience)
+                this.initiallyOpened = false;
+                this.newQuantity = 0;
+            } else {
+                this.newQuantity = this.newQuantity + "" + 0; // I could convert to Number() here but the watcher will do this anyway
             }
         },
         onBackspace() {
@@ -134,7 +137,6 @@ export default {
                 itemId: this.currentlySelectedDetails.selectedItemId,
                 newQuantity: Number(this.newQuantity),
             };
-            console.log("payload: ", payload);
 
             this.$store.commit("changeItemQuantity", payload);
 

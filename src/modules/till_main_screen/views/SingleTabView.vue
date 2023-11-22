@@ -5,7 +5,11 @@
             <div class="container1 visual-border">
                 <h2 class="container-title">Menu</h2>
                 <div class="menu-items-container">
-                    <div v-for="item in menuItems" class="menu-item visual-border">
+                    <div
+                        v-for="item in menuItems"
+                        class="menu-item visual-border"
+                        @click="onMenuItemClick(item.itemId)"
+                    >
                         <img :src="item.itemImgURL" :alt="item.name" class="menu-item-img" />
                         <div class="menu-item-title">{{ item.name }}</div>
                         <div class="menu-item-price">{{ displayableStrFromPrice(item.price) }}</div>
@@ -41,7 +45,6 @@
                         <div class="item-name">
                             {{ _menuItemNameFromId(item.itemId) }}
                         </div>
-                        <!-- TODO: fix missaligntment if adding more than 9 -->
                         <div class="item-price-quantity">
                             {{ displayableStrFromPrice(_menuItemPriceFromId(item.itemId)) }} |
                             {{ item.quantity }}
@@ -150,6 +153,30 @@ export default {
                 this.newSelectedItemInTab(0);
             }
         },
+        onMenuItemClick(menuItemId) {
+            // check if tab aleady has this item on it and the quantity
+            let currentItemQuantity = this.currentTab.items.find(
+                (item) => item.itemId === menuItemId
+            )?.quantity; // is undefined or a number
+
+            // if Yes, (add +1 to quantity)
+            if (currentItemQuantity >= 1) {
+                let payload = {
+                    tabId: this.selectedTabId,
+                    itemId: menuItemId,
+                    newQuantity: currentItemQuantity + 1,
+                };
+                this.$store.commit("changeItemQuantity", payload);
+            }
+            // if No, (add it as a new item to the tab)
+            else {
+                let payload = {
+                    tabId: this.selectedTabId,
+                    item: { itemId: menuItemId, quantity: 1 },
+                };
+                this.$store.commit("addItemToTab", payload);
+            }
+        },
     },
 };
 </script>
@@ -243,10 +270,7 @@ export default {
     display: flex;
     flex-direction: column;
 }
-.container-title {
-    padding: 0.25rem 0;
-    font-size: 1.75rem;
-}
+
 .tab-items-list {
     overflow-y: auto;
     max-height: 100%;

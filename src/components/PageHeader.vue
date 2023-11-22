@@ -30,6 +30,7 @@
             </nav>
         </v-toolbar-items>
     </v-toolbar>
+    <div class="error-message" v-if="stateErrorMsg">Error message: {{ stateErrorMsg }}</div>
 </template>
 
 <script>
@@ -48,6 +49,9 @@ export default {
         },
         loggedInUserEmail() {
             return this.loggedInUser.email;
+        },
+        stateErrorMsg() {
+            return this.$store.state.error;
         },
     },
     methods: {
@@ -92,11 +96,6 @@ img.logo {
     height: 40%;
     margin: auto;
 }
-/* .title-and-icon {
-    position: absolute;
-
-    transform: translateX(100%);
-} */
 
 .nav-links {
     margin: auto;
@@ -121,5 +120,8 @@ nav a {
     font-weight: bold;
     display: inline-block;
     cursor: pointer;
+}
+.error-message {
+    color: red;
 }
 </style>

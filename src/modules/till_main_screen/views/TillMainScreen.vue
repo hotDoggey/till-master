@@ -3,22 +3,23 @@
         <!-- Open Tabs Container -->
         <div class="open-tabs-container visual-border">
             <!-- Open Tabs List -->
-            <h2 class="allow-text-selection">Open Tabs</h2>
-            <div class="tabs-list-container"></div>
-            <v-list class="tabs-list">
-                <v-list-item
-                    v-for="tab in dummyTabs"
-                    :class="['mini-tab', { selectedTab: selectedTabId === tab.id }]"
-                    :key="tab.id"
-                    :title="'Table ' + tab.tableId + ' - ' + tab.createdTimestamp"
-                    :subtitle="itemsToStr(tab.items)"
-                    @click="openTab(tab.id)"
-                ></v-list-item>
-            </v-list>
+            <h2 class="allow-text-selection container-title">Open Tabs</h2>
+            <div class="tabs-list-container">
+                <v-list class="tabs-list">
+                    <v-list-item
+                        v-for="tab in dummyTabs"
+                        :class="['mini-tab', { selectedTab: selectedTabId === tab.id }]"
+                        :key="tab.id"
+                        :title="'Table ' + tab.tableId + ' - ' + tab.createdTimestamp"
+                        :subtitle="itemsToStr(tab.items)"
+                        @click="openTab(tab.id)"
+                    ></v-list-item>
+                </v-list>
 
-            <!-- Create Tab Button -->
-            <div class="mini-tab create-tab-btn" @click="createTabPopupOpen = true">
-                <font-awesome-icon class="icon-pad-right" icon="circle-plus" />Create Tab
+                <!-- Create Tab Button -->
+                <div class="mini-tab create-tab-btn" @click="createTabPopupOpen = true">
+                    <font-awesome-icon class="icon-pad-right" icon="circle-plus" />Create Tab
+                </div>
             </div>
         </div>
 
@@ -121,14 +122,18 @@ export default {
     flex: 1; /* Take up 1/5 (20%) of the available space */
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Adjust the gap between the list and create tab button */
     background-color: #ccc; /* Set a background color for the boxes */
     margin: 0.5rem;
     margin-right: 0; /* prevents doubled up margin between the two containers on the page  */
     height: 100%;
+}
+.tabs-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adjust the gap between the list and create tab button */
+    height: 93.5%;
     justify-content: space-between; /* make create tab button floating at the bottom */
 }
-
 .tabs-list {
     margin: 0.5rem;
     margin-right: 0; /* remove space between scrollbar and edge of container */

@@ -112,4 +112,8 @@ nav a.router-link-exact-active {
 .visual-border {
     border: 1px solid black; /* for ez visualization */
 }
+.container-title {
+    padding: 0.25rem 0;
+    font-size: 1.75rem;
+}
 </style>

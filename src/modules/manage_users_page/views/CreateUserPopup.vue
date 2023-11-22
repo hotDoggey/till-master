@@ -28,7 +28,6 @@
 
                             <!-- email as username -->
                             <v-text-field
-                                autocomplete="username"
                                 class="ma-2 pa-2"
                                 v-model="newUsername"
                                 type="email"
@@ -38,7 +37,7 @@
 
                             <!-- password -->
                             <v-text-field
-                                autocomplete="password"
+                                ref="passField"
                                 class="ma-2 pa-2"
                                 v-model="newPassword"
                                 type="password"
@@ -60,12 +59,23 @@
                             ></v-select>
                             <!-- TODO: better use of this message needed - prob pass back to manage users screen -->
                             <div>{{ successMessage }}</div>
+                            <v-alert v-if="error" type="error" :text="error"></v-alert>
 
                             <v-divider></v-divider>
 
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" text :disabled="formIsInvalid" type="submit">
+                                <v-progress-circular
+                                    v-if="isLoading"
+                                    indeterminate
+                                    color="primary"
+                                ></v-progress-circular>
+                                <v-btn
+                                    color="primary"
+                                    text
+                                    :disabled="formIsInvalid || isLoading"
+                                    type="submit"
+                                >
                                     Create User
                                 </v-btn>
                                 <v-btn color="primary" text @click="cancelCreate"> Cancel </v-btn>
@@ -106,6 +116,12 @@ export default {
                     : false;
             return result;
         },
+        error() {
+            return this.$store.getters.error;
+        },
+        isLoading() {
+            return this.$store.state.isLoading;
+        },
     },
 
     methods: {
@@ -123,14 +139,19 @@ export default {
             };
             // run vuex action for createUser using the payload
             let result = await this.$store.dispatch("createUser", payload);
+            // if result is okay
+            if (result) {
+                this.successMessage = "Created user successfully!";
+                console.log("CREATED user, closing popup", result);
+                this.$emit("createdUser");
+                this.cancelCreate();
+            }
+            // there was an error:
+            else {
+                // this.$store.error
+            }
             // TODO: Add a spinner to button?
-            // TODO: Make the shown message look better than just text - popup/modal?
-            console.log("result: ", result);
-            console.log("CREATED user, closing popup", result);
-            this.successMessage = result;
             // close popup and clear selected table
-            this.$emit("createdUser");
-            this.cancelCreate();
         },
 
         cancelCreate() {
