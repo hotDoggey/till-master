@@ -7,7 +7,7 @@
             <div class="tabs-list-container">
                 <v-list class="tabs-list">
                     <v-list-item
-                        v-for="tab in dummyTabs"
+                        v-for="tab in allTabs"
                         :class="['mini-tab', { selectedTab: selectedTabId === tab.id }]"
                         :key="tab.id"
                         :title="'Table ' + tab.tableId + ' - ' + tab.createdTimestamp"
@@ -78,10 +78,13 @@ export default {
             selectedTabId: 213,
         };
     },
+    mounted() {
+        // TODO: add here a line that sets the selectedTabId on mount to the first one available in the list
+    },
     computed: {
         // computed is the way to get vuex getters! will always update and get the latest state
-        dummyTabs() {
-            return this.$store.state.dummyTabs; // Get sorted tabs from store
+        allTabs() {
+            return this.$store.state.allTabs; // Get sorted tabs from store
         },
     },
     methods: {

@@ -1,7 +1,9 @@
 import { createStore } from "vuex";
 import {
+    firebaseApp,
     firestoreDB,
     tabs,
+    addDoc,
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -9,8 +11,8 @@ import {
 
 export default createStore({
     state: {
-        dummyTabs: {
-            213: {
+        allTabs: [
+            {
                 id: 213,
                 tableId: 2,
                 createdTimestamp: "16:46 10/10/2023",
@@ -25,7 +27,7 @@ export default createStore({
                     { itemId: 131, quantity: 1 },
                 ],
             },
-            352: {
+            {
                 id: 352,
                 tableId: 3,
                 createdTimestamp: "18:45 10/10/2023",
@@ -38,7 +40,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-            353: {
+            {
                 id: 353,
                 tableId: 3,
                 createdTimestamp: "18:46 10/10/2023",
@@ -51,7 +53,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-            354: {
+            {
                 id: 354,
                 tableId: 4,
                 createdTimestamp: "18:47 10/10/2023",
@@ -64,7 +66,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-            355: {
+            {
                 id: 355,
                 tableId: 4,
                 createdTimestamp: "18:48 10/10/2023",
@@ -77,7 +79,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-            // 356: {
+            // {
             //     id: 356,
             //     tableId: 4,
             //     createdTimestamp: "18:46 10/10/2023",
@@ -90,7 +92,7 @@ export default createStore({
             //         { itemId: 123, quantity: 1 },
             //     ],
             // },
-            // 357: {
+            // {
             //     id: 357,
             //     tableId: 4,
             //     createdTimestamp: "18:46 10/10/2023",
@@ -103,7 +105,7 @@ export default createStore({
             //         { itemId: 123, quantity: 1 },
             //     ],
             // },
-            // 358: {
+            // {
             //     id: 358,
             //     tableId: 1,
             //     createdTimestamp: "18:46 10/10/2023",
@@ -116,7 +118,7 @@ export default createStore({
             //         { itemId: 123, quantity: 1 },
             //     ],
             // },
-            359: {
+            {
                 id: 359,
                 tableId: 1,
                 createdTimestamp: "18:46 10/10/2023",
@@ -129,7 +131,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-            360: {
+            {
                 id: 360,
                 tableId: 1,
                 createdTimestamp: "18:46 10/10/2023",
@@ -142,7 +144,7 @@ export default createStore({
                     { itemId: 123, quantity: 1 },
                 ],
             },
-        },
+        ],
         // to test logging in comment out below details and leave as empty {}
         loggedInUser: {
             customData: {
@@ -266,7 +268,7 @@ export default createStore({
     },
     getters: {
         // Get tab details by id from state
-        tabDetailsById: (state) => (id) => state.dummyTabs[id], // confusing way of writing that (with two =>) but that's how it works
+        tabDetailsById: (state) => (id) => state.allTabs.find((x) => x.id === id), // confusing way of writing that (with two =>) but that's how it works
 
         // Get table number by id from state
         tableNumberFromId: (state) => (id) =>
@@ -289,7 +291,7 @@ export default createStore({
     // Mutations: Commit things to the store
     mutations: {
         // Add a tab to state
-        addTab: (state, tab) => (state.dummyTabs[tab.id] = tab),
+        addTab: (state, tab) => state.allTabs.push(tab),
         setLoggedInUser: (state, user) => {
             state.loggedInUser = user;
         },
@@ -311,7 +313,7 @@ export default createStore({
             console.log("tabs: ", tabs);
 
             // find the tab we are editing
-            let tab = state.dummyTabs[payload.tabId];
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
 
             // delete item if zero
             if (payload.newQuantity === 0) {
@@ -332,7 +334,7 @@ export default createStore({
         addItemToTab: (state, payload) => {
             // find the tab we are editing
             console.log("payload.tabId: ", payload.tabId);
-            let tab = state.dummyTabs[payload.tabId];
+            let tab = state.allTabs[payload.tabId];
 
             // add the item to that tab's items list
             tab.items.push(payload.item);

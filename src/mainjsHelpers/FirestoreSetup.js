@@ -2,11 +2,11 @@
 // and to import any firebase components i need ready for global declarement in main.js
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 // create firebase config - copied directly from firebase project
-const firebaseConfig = {
+let firebaseConfig = {
     apiKey: "AIzaSyA8zWUKjmu7mL_cW8t9sM5S6ZJhMDdik3s",
     authDomain: "till-manager.firebaseapp.com",
     databaseURL: "https://till-manager-default-rtdb.europe-west1.firebasedatabase.app",
@@ -18,10 +18,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+let firebaseApp = initializeApp(firebaseConfig);
 
 // Initialize Firestore Database - FYI - the db doesnt need a specific parameter passed such as the firebaseApp, it will pick that up itself as its a global variable
-const firestoreDB = getFirestore();
+let firestoreDB = getFirestore();
 /*  For future me: A ref points to a collection, we use the colletion method to create 
     a ref. We pass in the firestoreDB and the name of the collection and can store it to a var
     then we can use getDocs function with a ref to retrieve the data in that collection,
@@ -30,7 +30,7 @@ const firestoreDB = getFirestore();
     entry, and can get the id using entry.id. In the below example "entry" is the "tab". 
  */
 // Collection reference
-const colRef = collection(firestoreDB, "tabs");
+let colRef = collection(firestoreDB, "tabs");
 // initialise tabs var
 let tabs = [];
 // Get collection data
@@ -44,9 +44,10 @@ getDocs(colRef)
     .catch((error) => {
         console.error("Error getting tabs: ", error);
     });
+console.log("tabs: ", tabs);
 
 // Initialize Firebase Authentication
-const firebaseAuth = getAuth(firebaseApp);
+let firebaseAuth = getAuth(firebaseApp);
 
 // get a list of all users currently signed up on this firstore app - TODO: doesnt work
 // let users = firebaseAuth.getUsers?.();
@@ -54,8 +55,9 @@ const firebaseAuth = getAuth(firebaseApp);
 
 export {
     firebaseApp,
-    tabs,
     firestoreDB,
+    tabs,
+    addDoc,
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
