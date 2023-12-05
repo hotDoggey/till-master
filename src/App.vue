@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { app as firebaseApp, auth } from "./mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
+import { onSnapshot, tabsColRef } from "./mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
 
 export default {
     name: "App",
@@ -23,10 +23,31 @@ export default {
         return {
             /* FYI you can create a variable here and access it anywhere in the app with:
             showScrollBar: false,
-            this.$root.setYScrollVisibilityTo(true) */
+            this.$root.setYScrollVisibilityTo(true) which is a method defined below*/
         };
     },
-    created() {},
+    beforeCreate() {
+        // Before creating the app, set up a subsciption to the AllTabs collection in firestore and update the vuex store with the tabs (this will also run every time a change is made to that firestore collection)
+        // Arg1: collection, Arg2: a callback function that runs every time a snapshot is received
+        onSnapshot(tabsColRef, (snapshot) => {
+            console.log("snapshot: ", snapshot);
+            this.$store.dispatch("updateTabsFromFSSnapshot", snapshot);
+            // run store action to update vuex store with new data
+        });
+        // Before creating the app, start the action in the vuex store to fetch all the tabs in firestore
+        // this.$store.dispatch("initialiseAllTabsFromFirestore");
+    },
+    mounted() {
+        //
+        const intervalId = setInterval(() => {
+            // plan:
+            // 1) for each on all tabs
+            // 2) if tab has needsupdating Bool=True = run update action on firestore
+        }, 5000);
+
+        // To stop the interval (optional), you can use clearInterval
+        // clearInterval(intervalId);
+    },
     computed: {
         loggedInUser() {
             return this.$store.getters.loggedInUser;
@@ -34,6 +55,7 @@ export default {
     },
     beforeDestroy() {},
     methods: {
+        // dont delete this, its for my future reference!
         setYScrollVisibilityTo(bool) {},
     },
 };

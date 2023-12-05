@@ -1,5 +1,5 @@
 <template>
-    <div class="page-container">
+    <div class="page-container" v-if="selectedTabId">
         <!-- Open Tabs Container -->
         <div class="open-tabs-container visual-border">
             <!-- Open Tabs List -->
@@ -53,7 +53,6 @@
     <create-tab-popup
         :popupOpenState="createTabPopupOpen"
         @closeCreateTabPopup="createTabPopupOpen = false"
-        @createdTab="closePopupAndMakeSelected"
     >
         <!--  -->
     </create-tab-popup>
@@ -64,7 +63,6 @@ import CreateTabPopup from "./CreateTabPopup.vue";
 import SingleTabView from "./SingleTabView.vue";
 export default {
     mounted() {
-        // TODO: remember I made these globals, remove if not needed due to doing most of auth stuff in the store.js
         // console.log("this.$firebaseApp: ", this.$firebaseApp);
         // console.log("this.$firebaseAuth: ", this.$firebaseAuth);
     },
@@ -75,14 +73,13 @@ export default {
     data() {
         return {
             createTabPopupOpen: false,
-            selectedTabId: 213,
         };
-    },
-    mounted() {
-        // TODO: add here a line that sets the selectedTabId on mount to the first one available in the list
     },
     computed: {
         // computed is the way to get vuex getters! will always update and get the latest state
+        selectedTabId() {
+            return this.$store.getters.selectedTabId;
+        },
         allTabs() {
             return this.$store.state.allTabs; // Get sorted tabs from store
         },
@@ -100,14 +97,8 @@ export default {
         },
         openTab(newId) {
             // changes the selectedTabId and as this is passed to the SingleTabView component as a prop, the component handles the rerender based on the new value using its computed value that gets re-evaluated
-            this.selectedTabId = newId;
-        },
-        // Once the create tab popup creates a tab, it will emit an event that fires this function which will set the selected Tab as that one
-        closePopupAndMakeSelected(newId) {
-            // Close the popup
-            this.createTabPopupOpen = false;
-            // View newly created tab
-            this.selectedTabId = newId;
+            // commit this through the mutation
+            this.$store.commit("changeSelectedTabId", newId);
         },
     },
 };

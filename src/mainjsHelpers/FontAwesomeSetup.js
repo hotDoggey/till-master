@@ -7,8 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"; /* FontAwesome c
 import {
     faCarBurst,
     faCarOn,
-    faUserCog,
-    faUserSecret,
+    faDeleteLeft,
+    faCheck,
     faListOl,
     faMoneyBill1Wave,
     faCirclePlus,
@@ -22,8 +22,10 @@ import {
 // import { fas } from '@fortawesome/free-solid-svg-icons' /* FontAwesome import all icons */
 
 library.add(
-    faCarOn,
     faCarBurst,
+    faCarOn,
+    faDeleteLeft,
+    faCheck,
     faListOl,
     faMoneyBill1Wave,
     faCirclePlus,

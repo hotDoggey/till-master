@@ -2,7 +2,17 @@
 // and to import any firebase components i need ready for global declarement in main.js
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    onSnapshot,
+    addDoc,
+    deleteDoc,
+    doc,
+    updateDoc,
+    setDoc,
+} from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 // create firebase config - copied directly from firebase project
@@ -28,13 +38,15 @@ let firestoreDB = getFirestore();
     this returns a promise with a snapshot. We can use the snapshot.docs to get each 
     entry, and then can use .data() on each entry to get all the values stored for that 
     entry, and can get the id using entry.id. In the below example "entry" is the "tab". 
- */
-// Collection reference
-let colRef = collection(firestoreDB, "tabs");
-// initialise tabs var
-let tabs = [];
-// Get collection data
-getDocs(colRef)
+
+    The following code has moved to the store, but i have left it here commented out for future reference.
+
+    // Collection reference
+    let colRef = collection(firestoreDB, "tabs");
+    // initialise tabs var
+    let tabs = [];
+    // Get collection data
+    getDocs(colRef)
     .then((snapshot) => {
         snapshot.docs.forEach((tab) => {
             let id = tab.id;
@@ -44,7 +56,10 @@ getDocs(colRef)
     .catch((error) => {
         console.error("Error getting tabs: ", error);
     });
-console.log("tabs: ", tabs);
+    console.log("tabs: ", tabs);
+    */
+// Collection reference to the all tabs in firestore
+let tabsColRef = collection(firestoreDB, "tabs");
 
 // Initialize Firebase Authentication
 let firebaseAuth = getAuth(firebaseApp);
@@ -56,8 +71,15 @@ let firebaseAuth = getAuth(firebaseApp);
 export {
     firebaseApp,
     firestoreDB,
-    tabs,
+    collection,
+    tabsColRef,
+    getDocs,
+    onSnapshot,
     addDoc,
+    deleteDoc,
+    doc,
+    updateDoc, // update a part of the document give you have the docRef created
+    setDoc, // replace the whole doucment with a new object
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,

@@ -42,6 +42,7 @@ const vuetify = createVuetify({
 const app = createApp(RootComponentApp);
 
 // Adding a global function/object to the Vue prototype, this is accessible anywhere in the rest of the app and components using this.$xxx
+// TODO: remove if not needed due to doing most of auth stuff in the store.js
 app.config.globalProperties.$firebaseApp = firebaseApp;
 app.config.globalProperties.$firebaseAuth = firebaseAuth;
 

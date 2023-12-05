@@ -72,8 +72,12 @@
                 <font-awesome-icon class="icon-pad-right" icon="trash" />Remove Selected
             </div>
             <!-- Close Tab Button -->
-            <div class="action-btn" @click="createTabPopupOpen = true">
+            <!-- <div class="action-btn" @click="createTabPopupOpen = true">
                 <font-awesome-icon class="icon-pad-right" icon="sack-dollar" />Close Tab
+            </div> -->
+            <!-- Delete Tab Button -->
+            <div class="action-btn" @click="deleteTab">
+                <font-awesome-icon class="icon-pad-right" icon="trash" />Delete Tab
             </div>
         </div>
     </div>
@@ -147,7 +151,7 @@ export default {
                 };
                 console.log("payload: ", payload);
                 // store mutation (commit) changeItemQuantity
-                this.$store.commit("changeItemQuantity", payload);
+                this.$store.dispatch("changeItemQuantity", payload);
 
                 // end with clearing the selected item
                 this.newSelectedItemInTab(0);
@@ -166,7 +170,7 @@ export default {
                     itemId: menuItemId,
                     newQuantity: currentItemQuantity + 1,
                 };
-                this.$store.commit("changeItemQuantity", payload);
+                this.$store.dispatch("changeItemQuantity", payload);
             }
             // if No, (add it as a new item to the tab)
             else {
@@ -176,6 +180,12 @@ export default {
                 };
                 this.$store.commit("addItemToTab", payload);
             }
+
+            // Make the added item the selected one
+            this.newSelectedItemInTab(menuItemId);
+        },
+        deleteTab() {
+            this.$store.dispatch("deleteTab", this.selectedTabId);
         },
     },
 };

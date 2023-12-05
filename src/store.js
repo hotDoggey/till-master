@@ -2,8 +2,13 @@ import { createStore } from "vuex";
 import {
     firebaseApp,
     firestoreDB,
-    tabs,
+    collection,
+    tabsColRef,
+    getDocs,
     addDoc,
+    deleteDoc,
+    doc,
+    updateDoc,
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -11,7 +16,9 @@ import {
 
 export default createStore({
     state: {
-        allTabs: [
+        // to use firestore, uncomment out the action in App.vue and change the 2 possition to lower one, change selectedTabId var below to null
+        allTabs: [],
+        allTabs2: [
             {
                 id: 213,
                 tableId: 2,
@@ -261,12 +268,15 @@ export default createStore({
                     "https://www.shutterstock.com/image-illustration/cider-bottle-apple-fruit-sketch-260nw-1560922523.jpg",
             },
         ],
-        selectedTabId: 0,
+        selectedTabId: null, //213,
         selectedItemId: 0,
         isLoading: false,
         error: null,
     },
     getters: {
+        // Get the selected tab to show on main screen
+        selectedTabId: (state) => state.selectedTabId,
+
         // Get tab details by id from state
         tabDetailsById: (state) => (id) => state.allTabs.find((x) => x.id === id), // confusing way of writing that (with two =>) but that's how it works
 
@@ -292,59 +302,243 @@ export default createStore({
     mutations: {
         // Add a tab to state
         addTab: (state, tab) => state.allTabs.push(tab),
+
+        // Delete a tab from store
+        deleteTab: (state, tabId) =>
+            (state.allTabs = state.allTabs.filter((tab) => tab.id !== tabId)),
+
+        // Change the selected tab in till main screen
+        changeSelectedTabId: (state, newTabId) => (state.selectedTabId = newTabId),
+
+        // Set selectedItemId to new val
+        setSelectedItemId: (state, newId) => (state.selectedItemId = newId),
+
+        // Set the logged in user to the new give object
         setLoggedInUser: (state, user) => {
             state.loggedInUser = user;
         },
+
         // Add a user to firestore
         addUserToAllUsers: (state, user) => {
             state.allUsers.push(user);
         },
+
+        // store the additional details for the user (name, dob...) later this will change to go to the database as well so we store it
         addUserDetails: (state, additionalDetails) => {
             state.allUsersDetails.push(additionalDetails);
         },
+
         // Set loggedInUser to an empty object
         logUserOut: (state) => (state.loggedInUser = {}),
+
+        // set a global loading state
         setLoading: (state, payload) => (state.isLoading = payload),
+
+        // set a global error message state
         setError: (state, payload) => (state.error = payload),
+
+        // clear global error message
         clearError: (state) => (state.error = null),
 
-        // change quantity of an item in a tab (zero will remove it)
-        changeItemQuantity: (state, payload) => {
-            console.log("tabs: ", tabs);
+        // // change quantity of an item in a tab (zero will remove it)
+        // changeItemQuantity: (state, payload) => {
+        //     // find the tab we are editing
+        //     let tab = state.allTabs.find((x) => x.id === payload.tabId);
 
-            // find the tab we are editing
-            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+        //     // delete item if zero
+        //     if (payload.newQuantity === 0) {
+        //         tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
+        //         state.selectedItemId = 0; // clear selected item id if its been deleted
+        //     }
+        //     //change to new quant
+        //     else if (payload.newQuantity > 0) {
+        //         // change quantity
+        //         let item = tab.items.find((item) => item.itemId === payload.itemId);
+        //         item.quantity = payload.newQuantity;
+        //     } else {
+        //         // Set error message
+        //         state.error = "Invalid value passed to changeItemQuantity() mutation";
+        //     }
+        // },
 
-            // delete item if zero
-            if (payload.newQuantity === 0) {
-                tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
-                state.selectedItemId = 0; // clear selected item id if its been deleted
-            }
-            //change to new quant
-            else if (payload.newQuantity > 0) {
-                // change quantity
-                let item = tab.items.find((item) => item.itemId === payload.itemId);
-                item.quantity = payload.newQuantity;
-            } else {
-                // Set error message
-                state.error = "Invalid value passed to changeItemQuantity() mutation";
-            }
-        },
         // add an item to the tab (when menu item is clicked)
         addItemToTab: (state, payload) => {
             // find the tab we are editing
-            console.log("payload.tabId: ", payload.tabId);
-            let tab = state.allTabs[payload.tabId];
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
 
             // add the item to that tab's items list
             tab.items.push(payload.item);
         },
 
-        // Set selectedItemId to new val
-        setSelectedItemId: (state, newId) => (state.selectedItemId = newId),
+        // change quantity of an item in a tab
+        changeItemQuantity: (state, payload) => {
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            // change quantity
+            let item = tab.items.find((item) => item.itemId === payload.itemId);
+            item.quantity = payload.newQuantity;
+        },
+
+        // delete an item from a tab
+        deleteItemFromTab: (state, payload) => {
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
+            state.selectedItemId = 0; // clear selected item id as its been deleted
+        },
     },
     // Actions: perform operations such as async api calls etc.
     actions: {
+        // On start of appliaction, in App.vue the following action will be run to fetch and populate the tabs array from firestore
+        initialiseAllTabsFromFirestore: async ({ commit, state }) => {
+            // Get collection data and push each tab to the allTabs array in state
+            await getDocs(tabsColRef)
+                .then((snapshot) => {
+                    snapshot.docs.forEach((tab) => {
+                        let id = tab.id;
+                        let payload = {
+                            ...tab.data(),
+                            id,
+                        };
+                        commit("addTab", payload);
+                    });
+                    state.selectedTabId = state.allTabs[0].id;
+                })
+                .catch((error) => {
+                    console.error("Error getting tabs: ", error);
+                });
+        },
+
+        // Action that is triggered by the onSnapshot method in App.vue that updates the allTabs property every time data is changed in firestore
+        updateTabsFromFSSnapshot: async ({ commit, state }, snapshot) => {
+            let newAllTabs = [];
+            snapshot.docs.forEach((tab) => {
+                let id = tab.id;
+                let payload = {
+                    ...tab.data(),
+                    id,
+                };
+                newAllTabs.push(payload);
+            });
+            console.log("newAllTabs: ", newAllTabs);
+            state.allTabs = newAllTabs;
+            state.selectedTabId = state.allTabs[0].id;
+        },
+
+        // Add a tab to firestore database collection and the vuex store allTabs property
+        addTabToFirestoreAndStore: async ({ commit, state }, newTab) => {
+            // commit the change to the firebase database, addDoc function takes 1. ReferenceToCollection 2. an object to add
+            await addDoc(tabsColRef, newTab)
+                .then((creatgedDocRef) => {
+                    // add the id returned from firestore
+                    newTab.id = creatgedDocRef.id;
+
+                    // commit the change to the vuex store as well now with the new id
+                    // commit("addTab", newTab);
+                    // console.log("newTab saved to firestore: ", newTab);
+
+                    // Set newly created tab as the selected one in store, so it shows on main page ready for editing
+                    commit("changeSelectedTabId", newTab.id);
+                })
+                .catch((err) => console.log(err));
+        },
+
+        // Delete a tab from firestore and the vuex store allTabs property (should be an admin only action)
+        deleteTab: async ({ commit, state }, tabId) => {
+            // set up a ref to the exact doc to delete (takes 3 args: db, "nameOfColl", idToDelete)
+            const docRef = doc(firestoreDB, "tabs", tabId);
+            console.log("about to delete docRef: ", docRef);
+            deleteDoc(docRef)
+                .then(() => {
+                    // commit the delete to the vuex store as well now
+                    commit("deleteTab", tabId); // TODO: remove as not needed if were subscribed
+                })
+                .catch((err) => console.log(err));
+
+            // change the selected tab id to a new one
+            state.selectedTabId = state.allTabs[0].id;
+        },
+
+        // update firestore tab
+        updateFirestoreTab: async (_cidn, { docRef, newItems }) => {
+            console.log("newItems: ", newItems);
+            let statusMessage = "";
+            await updateDoc(docRef, { items: newItems })
+                .then((returnedFromFirestore) => {
+                    statusMessage = "updated successfully in firestore";
+                })
+                .catch((err) => {
+                    console.log(err);
+                    statusMessage = `update was unsuccessful: ${err.message}`;
+                });
+            return statusMessage;
+        },
+
+        // change quantity of an item in a tab (zero will remove it)
+        changeItemQuantity: async ({ commit, dispatch, state }, payload) => {
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            // create a refrence to the document we want to update later in the firestore
+            const docRef = doc(firestoreDB, "tabs", payload.tabId);
+            console.log("payload: ", payload);
+
+            // delete item if zero
+            if (payload.newQuantity === 0) {
+                commit("deleteItemFromTab", payload);
+                // Firestore action to set data there
+                let statusMessage = await dispatch("updateFirestoreTab", {
+                    docRef: docRef,
+                    newItems: tab.items,
+                });
+                console.log("statusMessage: ", statusMessage);
+            }
+            //change to new quant
+            else if (payload.newQuantity > 0) {
+                // change quantity
+                commit("changeItemQuantity", payload);
+                // Firestore action to set data there
+                let statusMessage = await dispatch("updateFirestoreTab", {
+                    docRef: docRef,
+                    newItems: tab.items,
+                });
+                console.log("statusMessage: ", statusMessage);
+            } else {
+                // Set error message
+                state.error = "Invalid value passed to changeItemQuantity() action";
+            }
+        },
+
+        // An imporvement would be to not update on each user action but user a x-second timer to reduce number of api calls. Would do it as follows:
+        // changeItemQuantity: async ({ commit, state }, payload) => {
+        // TODO: on the tab level, have a property changesNeedsSendingToFirestore,
+        // toggle this to true once a change is made and start 5s timer. timer is
+        // reset to 5s each time there is a change in the tab. if timer reaches 0, then
+        // action below is tirggered to update any tabs with that property set to True
+        //
+        // add a blocking popup from chrome on exit of page to stop exit if there are still commits to be done!
+        // },
+
+        // Update the tab in firestore once a user makes changes to the items array
+        updateTabInFirestore: async ({ commit, state }, updatedTab) => {
+            const { id, ...updatedTabWithoutId } = updatedTab; // Extract the ID from the updatedTab
+            console.log("id: ", id);
+            console.log("updatedTabWithoutId: ", updatedTabWithoutId);
+
+            // Create a Reference to the specific document by its id
+            const docRef = doc(firestoreDB, "tabs", id);
+
+            // run update command using the ref and the new data
+            await updateDoc(docRef, updatedTabWithoutId)
+                .then((somethingIsReturned) => {
+                    console.log("somethingIsReturned: ", somethingIsReturned);
+                    console.log("Tab updated successfully in Firestore");
+                })
+                .catch((err) => console.error("Error updating tab:", err));
+        },
+
         // Action to create a user in firestore
         createUser: async ({ commit, state }, payload) => {
             console.log("in craeteUser Action, payload is: ", payload);

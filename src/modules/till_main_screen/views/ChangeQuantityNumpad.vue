@@ -30,13 +30,20 @@
                 <div v-if="x < 10" class="number-btn btn" @click="numberPressed(x)">
                     {{ x }}
                 </div>
-
                 <div v-else-if="x === 10" class="action-btn btn" @click="onZeroLogic">0</div>
+
                 <!-- backspace button -->
-                <div v-else-if="x === 11" class="action-btn btn" @click="onBackspace">&lt=</div>
+                <div v-else-if="x === 11" class="action-btn btn" @click="onBackspace">
+                    <font-awesome-icon class="icon-pad-right" icon="delete-left" size="lg" />
+                </div>
+
                 <!-- enter button -->
-                <div v-else-if="x === 12" class="action-btn btn" @click="finalSetQuantityToValue">
-                    ✔️
+                <div
+                    v-else-if="x === 12"
+                    class="action-btn btn done-btn"
+                    @click="finalSetQuantityToValue"
+                >
+                    <font-awesome-icon class="icon-pad-right" icon="check" size="xl" />
                 </div>
             </div>
         </div>
@@ -138,7 +145,7 @@ export default {
                 newQuantity: Number(this.newQuantity),
             };
 
-            this.$store.commit("changeItemQuantity", payload);
+            this.$store.dispatch("changeItemQuantity", payload);
 
             // close popup
             this.closeQuantityNumpad();
@@ -191,6 +198,7 @@ export default {
 /* Remove up and down buttons on the quant field */
 /* For Firefox */
 input[type="number"] {
+    appearance: none;
     -moz-appearance: textfield;
 }
 
