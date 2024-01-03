@@ -1,5 +1,5 @@
 <template>
-    <div class="page-container" v-if="selectedTabId">
+    <div class="page-container">
         <!-- Open Tabs Container -->
         <div class="open-tabs-container visual-border">
             <!-- Open Tabs List -->
@@ -24,7 +24,7 @@
         </div>
 
         <!-- Right Main Container -->
-        <div class="singe-tab-details">
+        <div class="singe-tab-details" v-if="selectedTabId">
             <single-tab-view :selectedTabId="selectedTabId">
                 <!-- remember you can use slots
                 <template v-slot:namedSlot>
@@ -47,6 +47,7 @@
             -->
             </single-tab-view>
         </div>
+        <div class="single-tab-details" v-else></div>
     </div>
 
     <!-- Create Tab Popup -->
@@ -61,6 +62,7 @@
 <script>
 import CreateTabPopup from "./CreateTabPopup.vue";
 import SingleTabView from "./SingleTabView.vue";
+
 export default {
     mounted() {
         // console.log("this.$firebaseApp: ", this.$firebaseApp);
@@ -75,6 +77,7 @@ export default {
             createTabPopupOpen: false,
         };
     },
+
     computed: {
         // computed is the way to get vuex getters! will always update and get the latest state
         selectedTabId() {
@@ -84,9 +87,17 @@ export default {
             return this.$store.state.allTabs; // Get sorted tabs from store
         },
     },
+    watch: {
+        selectedTabId(newVal, oldVal) {
+            console.log("newVal: ", newVal);
+            if (newVal === undefined || newVal === null || newVal === "") {
+                // update the selectedTabId to be of the first tab in any case that it is undefined
+                this.$store.state.selectedTabId = this.$store.state.allTabs[0]?.id;
+            }
+        },
+    },
     methods: {
         itemsToStr(items) {
-            // console.log("why is this running??");
             // build array of item names
             let itemNamesArr = [];
             items.forEach((item) =>

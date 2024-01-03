@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { onSnapshot, tabsColRef } from "./mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
+import { onSnapshot, tabsColRef } from "@/mainjsHelpers/FirestoreSetup"; // Import the named export 'app' from the firebase.js file
 
 export default {
     name: "App",
@@ -26,27 +26,16 @@ export default {
             this.$root.setYScrollVisibilityTo(true) which is a method defined below*/
         };
     },
-    beforeCreate() {
-        // Before creating the app, set up a subsciption to the AllTabs collection in firestore and update the vuex store with the tabs (this will also run every time a change is made to that firestore collection)
-        // Arg1: collection, Arg2: a callback function that runs every time a snapshot is received
-        onSnapshot(tabsColRef, (snapshot) => {
-            console.log("snapshot: ", snapshot);
-            this.$store.dispatch("updateTabsFromFSSnapshot", snapshot);
-            // run store action to update vuex store with new data
-        });
-        // Before creating the app, start the action in the vuex store to fetch all the tabs in firestore
-        // this.$store.dispatch("initialiseAllTabsFromFirestore");
-    },
+
     mounted() {
-        //
         const intervalId = setInterval(() => {
             // plan:
             // 1) for each on all tabs
-            // 2) if tab has needsupdating Bool=True = run update action on firestore
+            // 2) if tab has needsUpdating Bool=True = run update action on firestore
         }, 5000);
 
         // To stop the interval (optional), you can use clearInterval
-        // clearInterval(intervalId);
+        clearInterval(intervalId);
     },
     computed: {
         loggedInUser() {
@@ -57,6 +46,19 @@ export default {
     methods: {
         // dont delete this, its for my future reference!
         setYScrollVisibilityTo(bool) {},
+    },
+    beforeCreate() {
+        // Before creating the app, set up a subsciption to the AllTabs collection in firestore and update the vuex store with the tabs (this will also run every time a change is made to that firestore collection)
+        // Arg1: collection, Arg2: a callback function that runs every time a snapshot is received
+        // for future: prob want to move this subscription to the TillMainScreen component so its not loaded before signing in
+        onSnapshot(tabsColRef, (snapshot) => {
+            console.log("snapshot: ", snapshot);
+            this.$store.dispatch("updateTabsFromFSSnapshot", snapshot);
+        });
+
+        // Also check for a stored token for a logged in user in session storage, log user in if found
+        let userAccessToken = sessionStorage.getItem("userAccessToken");
+        // if (userAccessToken) this.$store.dispatch("signUserInWithToken", userAccessToken);
     },
 };
 </script>
@@ -132,10 +134,13 @@ nav a.router-link-exact-active {
     display: none !important;
 }
 .visual-border {
-    border: 1px solid black; /* for ez visualization */
+    border: 1px solid black; /* for visualization */
 }
 .container-title {
     padding: 0.25rem 0;
     font-size: 1.75rem;
+}
+.hint-text {
+    color: rgb(196, 196, 197);
 }
 </style>

@@ -13,7 +13,12 @@ import {
     updateDoc,
     setDoc,
 } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithCustomToken,
+} from "firebase/auth";
 
 // create firebase config - copied directly from firebase project
 let firebaseConfig = {
@@ -83,4 +88,5 @@ export {
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    signInWithCustomToken,
 };

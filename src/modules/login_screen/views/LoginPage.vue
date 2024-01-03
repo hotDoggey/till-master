@@ -27,7 +27,7 @@
         </v-row>
     </v-container>
 
-    <div class="hint-text">
+    <div class="demo-text hint-text">
         <p>Demo version. Use the following details to login and view the rest of the system:</p>
         <p>Username: test_admin_user123@example.com</p>
         <p>Password: 123456</p>
@@ -76,8 +76,7 @@ export default {
     width: 100%; /* Adjust the width as needed */
     margin: 0 auto; /* center the button */
 }
-.hint-text {
+.demo-text {
     padding-top: 6rem;
-    color: rgb(196, 196, 197);
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
     <div class="singe-tab-details-container">
+        <!-- {{ selectedTabId }} -->
         <div class="tab-details">
             <!-- Container1 -->
             <div class="container1 visual-border">
@@ -178,7 +179,7 @@ export default {
                     tabId: this.selectedTabId,
                     item: { itemId: menuItemId, quantity: 1 },
                 };
-                this.$store.commit("addItemToTab", payload);
+                this.$store.dispatch("addItemToTab", payload);
             }
 
             // Make the added item the selected one

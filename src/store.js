@@ -12,13 +12,14 @@ import {
     firebaseAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    signInWithCustomToken,
 } from "./mainjsHelpers/FirestoreSetup";
 
 export default createStore({
     state: {
         // to use firestore, uncomment out the action in App.vue and change the 2 possition to lower one, change selectedTabId var below to null
         allTabs: [],
-        allTabs2: [
+        resetDemoTabsTo: [
             {
                 id: 213,
                 tableId: 2,
@@ -154,39 +155,40 @@ export default createStore({
         ],
         // to test logging in comment out below details and leave as empty {}
         loggedInUser: {
-            customData: {
-                ownedTabs: [355, 356, 357],
-                openTabs: [355, 356],
-                forename: "David",
-                surname: "Jones",
-                role: "admin",
-            },
-            uid: "DUimqnbJbMY9SSzKhhyYcZMYke73",
-            email: "biser951+firetest12@gmail.com",
-            emailVerified: false,
-            isAnonymous: false,
-            providerData: [
-                {
-                    providerId: "password",
-                    uid: "biser951+firetest12@gmail.com",
-                    displayName: null,
-                    email: "biser951+firetest12@gmail.com",
-                    phoneNumber: null,
-                    photoURL: null,
-                },
-            ],
-            stsTokenManager: {
-                refreshToken:
-                    "AMf-vBxdSGDshhMwllbu_vQG2xm4zfdhU60JGuagCdyLuA0emLwtkD9KdTSLs_amLeBLRA4vC1s06EDd_sCiKUsTynzSanAhvgeTRDJtyY3CBNQ9t0-CpIVQ7XuZXykaglfcgENFz3iLJT8w-sobKJIvGW-wUvo9Xw0V5oYawi_xCU9uxb5qWGiEwY0TVsTqHrVUCXbxCrWIRzJw6nfDgVCp66Hhb_9zIg",
-                accessToken:
-                    "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAzZDA3YmJjM2Q3NWM2OTQyNzUxMGY2MTc0ZWIyZjE2NTQ3ZDRhN2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdGlsbC1tYW5hZ2VyIiwiYXVkIjoidGlsbC1tYW5hZ2VyIiwiYXV0aF90aW1lIjoxNjk4MTU4ODkwLCJ1c2VyX2lkIjoiRFVpbXFuYkpiTVk5U1N6S2hoeVljWk1Za2U3MyIsInN1YiI6IkRVaW1xbmJKYk1ZOVNTektoaHlZY1pNWWtlNzMiLCJpYXQiOjE2OTgxNTg4OTAsImV4cCI6MTY5ODE2MjQ5MCwiZW1haWwiOiJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.tIFAMZ0F0_Q_KDzAgiO4t1OeJXL2NBjIHz8rpRcijlgcpm9_8NFsRs7jH8xJ4Y7QEAxwPb2u1HIMyrnt3opUszZyPSt_rM_5Cujr9U2X8s4qRaoj6c-EQCK-eNCMGf61w2yl1B44gfmue5Ha6rbYhdIQXIM9GTOjzG-jOD2u9eIr-iFiN876Ayt4nOR6g1j3dQE7PBXt67R08QcIh2sAtNxlGsdOVUdAmCPjAdRmBdCYVATtRxZMaDb2pzAxu21S5HGb6wbyeHqKfwhXli2n73H1CPMDUR_aF5KSKc3vU3s9J3soHERGugAl2uUpxKJR5NG48APmh85HXjn8L33HHw",
-                expirationTime: 1698162490747,
-            },
-            createdAt: "1698158890732",
-            lastLoginAt: "1698158890732",
-            apiKey: "AIzaSyA8zWUKjmu7mL_cW8t9sM5S6ZJhMDdik3s",
-            appName: "[DEFAULT]",
+            // customData: {
+            //     ownedTabs: [355, 356, 357],
+            //     openTabs: [355, 356],
+            //     forename: "David",
+            //     surname: "Jones",
+            //     role: "admin",
+            // },
+            // uid: "DUimqnbJbMY9SSzKhhyYcZMYke73",
+            // email: "biser951+firetest12@gmail.com",
+            // emailVerified: false,
+            // isAnonymous: false,
+            // providerData: [
+            //     {
+            //         providerId: "password",
+            //         uid: "biser951+firetest12@gmail.com",
+            //         displayName: null,
+            //         email: "biser951+firetest12@gmail.com",
+            //         phoneNumber: null,
+            //         photoURL: null,
+            //     },
+            // ],
+            // stsTokenManager: {
+            //     refreshToken:
+            //         "AMf-vBxdSGDshhMwllbu_vQG2xm4zfdhU60JGuagCdyLuA0emLwtkD9KdTSLs_amLeBLRA4vC1s06EDd_sCiKUsTynzSanAhvgeTRDJtyY3CBNQ9t0-CpIVQ7XuZXykaglfcgENFz3iLJT8w-sobKJIvGW-wUvo9Xw0V5oYawi_xCU9uxb5qWGiEwY0TVsTqHrVUCXbxCrWIRzJw6nfDgVCp66Hhb_9zIg",
+            //     accessToken:
+            //         "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAzZDA3YmJjM2Q3NWM2OTQyNzUxMGY2MTc0ZWIyZjE2NTQ3ZDRhN2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vdGlsbC1tYW5hZ2VyIiwiYXVkIjoidGlsbC1tYW5hZ2VyIiwiYXV0aF90aW1lIjoxNjk4MTU4ODkwLCJ1c2VyX2lkIjoiRFVpbXFuYkpiTVk5U1N6S2hoeVljWk1Za2U3MyIsInN1YiI6IkRVaW1xbmJKYk1ZOVNTektoaHlZY1pNWWtlNzMiLCJpYXQiOjE2OTgxNTg4OTAsImV4cCI6MTY5ODE2MjQ5MCwiZW1haWwiOiJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJiaXNlcjk1MStmaXJldGVzdDEyQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.tIFAMZ0F0_Q_KDzAgiO4t1OeJXL2NBjIHz8rpRcijlgcpm9_8NFsRs7jH8xJ4Y7QEAxwPb2u1HIMyrnt3opUszZyPSt_rM_5Cujr9U2X8s4qRaoj6c-EQCK-eNCMGf61w2yl1B44gfmue5Ha6rbYhdIQXIM9GTOjzG-jOD2u9eIr-iFiN876Ayt4nOR6g1j3dQE7PBXt67R08QcIh2sAtNxlGsdOVUdAmCPjAdRmBdCYVATtRxZMaDb2pzAxu21S5HGb6wbyeHqKfwhXli2n73H1CPMDUR_aF5KSKc3vU3s9J3soHERGugAl2uUpxKJR5NG48APmh85HXjn8L33HHw",
+            //     expirationTime: 1698162490747,
+            // },
+            // createdAt: "1698158890732",
+            // lastLoginAt: "1698158890732",
+            // apiKey: "AIzaSyA8zWUKjmu7mL_cW8t9sM5S6ZJhMDdik3s",
+            // appName: "[DEFAULT]",
         },
+        userAccessToken: null,
         allUsers: [],
         allUsersDetails: [],
         availableTables: [
@@ -272,6 +274,7 @@ export default createStore({
         selectedItemId: 0,
         isLoading: false,
         error: null,
+        initalLoad: true,
     },
     getters: {
         // Get the selected tab to show on main screen
@@ -316,6 +319,12 @@ export default createStore({
         // Set the logged in user to the new give object
         setLoggedInUser: (state, user) => {
             state.loggedInUser = user;
+            console.log("user: ", user);
+
+            // set access token as well
+            let userAccessToken = user.stsTokenManager.accessToken;
+            sessionStorage.setItem("userAccessToken", userAccessToken);
+            state.userAccessToken = userAccessToken;
         },
 
         // Add a user to firestore
@@ -329,7 +338,14 @@ export default createStore({
         },
 
         // Set loggedInUser to an empty object
-        logUserOut: (state) => (state.loggedInUser = {}),
+        logUserOut: (state) => {
+            // set user object to empty {}
+            state.loggedInUser = {};
+
+            // set userAccessToken in store and session storage to also a blank value null
+            sessionStorage.setItem("userAccessToken", null);
+            state.userAccessToken = null;
+        },
 
         // set a global loading state
         setLoading: (state, payload) => (state.isLoading = payload),
@@ -379,36 +395,27 @@ export default createStore({
             let item = tab.items.find((item) => item.itemId === payload.itemId);
             item.quantity = payload.newQuantity;
         },
-
-        // delete an item from a tab
-        deleteItemFromTab: (state, payload) => {
-            // find the tab we are editing
-            let tab = state.allTabs.find((x) => x.id === payload.tabId);
-
-            tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
-            state.selectedItemId = 0; // clear selected item id as its been deleted
-        },
     },
     // Actions: perform operations such as async api calls etc.
     actions: {
-        // On start of appliaction, in App.vue the following action will be run to fetch and populate the tabs array from firestore
-        initialiseAllTabsFromFirestore: async ({ commit, state }) => {
-            // Get collection data and push each tab to the allTabs array in state
-            await getDocs(tabsColRef)
-                .then((snapshot) => {
-                    snapshot.docs.forEach((tab) => {
-                        let id = tab.id;
-                        let payload = {
-                            ...tab.data(),
-                            id,
-                        };
-                        commit("addTab", payload);
-                    });
-                    state.selectedTabId = state.allTabs[0].id;
-                })
-                .catch((error) => {
-                    console.error("Error getting tabs: ", error);
-                });
+        // Add an item to the tab (when menu item is clicked)
+        addItemToTab: async ({ commit, dispatch, state }, payload) => {
+            commit("addItemToTab", payload);
+
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            // create a refrence to the document we want to update later in the firestore
+            const docRef = doc(firestoreDB, "tabs", payload.tabId);
+            console.log("payload: ", payload);
+
+            // Firestore action to set data there
+            let statusMessage = await dispatch("updateFirestoreTab", {
+                docRef: docRef,
+                newItems: tab.items,
+            });
+
+            console.log("payload: ", payload);
         },
 
         // Action that is triggered by the onSnapshot method in App.vue that updates the allTabs property every time data is changed in firestore
@@ -424,7 +431,11 @@ export default createStore({
             });
             console.log("newAllTabs: ", newAllTabs);
             state.allTabs = newAllTabs;
-            state.selectedTabId = state.allTabs[0].id;
+
+            if (state.initalLoad) {
+                state.selectedTabId = state.allTabs[0]?.id;
+                state.initalLoad = false;
+            }
         },
 
         // Add a tab to firestore database collection and the vuex store allTabs property
@@ -449,16 +460,13 @@ export default createStore({
         deleteTab: async ({ commit, state }, tabId) => {
             // set up a ref to the exact doc to delete (takes 3 args: db, "nameOfColl", idToDelete)
             const docRef = doc(firestoreDB, "tabs", tabId);
-            console.log("about to delete docRef: ", docRef);
             deleteDoc(docRef)
                 .then(() => {
-                    // commit the delete to the vuex store as well now
-                    commit("deleteTab", tabId); // TODO: remove as not needed if were subscribed
+                    // change the selected tab id to a new one
+                    let newIdIfPossible = state.allTabs[0]?.id;
+                    state.selectedTabId = newIdIfPossible ? newIdIfPossible : 0;
                 })
                 .catch((err) => console.log(err));
-
-            // change the selected tab id to a new one
-            state.selectedTabId = state.allTabs[0].id;
         },
 
         // update firestore tab
@@ -521,24 +529,6 @@ export default createStore({
         // add a blocking popup from chrome on exit of page to stop exit if there are still commits to be done!
         // },
 
-        // Update the tab in firestore once a user makes changes to the items array
-        updateTabInFirestore: async ({ commit, state }, updatedTab) => {
-            const { id, ...updatedTabWithoutId } = updatedTab; // Extract the ID from the updatedTab
-            console.log("id: ", id);
-            console.log("updatedTabWithoutId: ", updatedTabWithoutId);
-
-            // Create a Reference to the specific document by its id
-            const docRef = doc(firestoreDB, "tabs", id);
-
-            // run update command using the ref and the new data
-            await updateDoc(docRef, updatedTabWithoutId)
-                .then((somethingIsReturned) => {
-                    console.log("somethingIsReturned: ", somethingIsReturned);
-                    console.log("Tab updated successfully in Firestore");
-                })
-                .catch((err) => console.error("Error updating tab:", err));
-        },
-
         // Action to create a user in firestore
         createUser: async ({ commit, state }, payload) => {
             console.log("in craeteUser Action, payload is: ", payload);
@@ -595,12 +585,15 @@ export default createStore({
 
             // begin loading spinner
             commit("setLoading", true);
+
+            // perform firestore action to sign user in with email and pass
             await signInWithEmailAndPassword(firebaseAuth, payload.username, payload.password)
                 .then((userCredential) => {
                     // stop loading spinner
                     commit("setLoading", false);
 
                     const user = userCredential.user;
+                    console.log("USSSER: ", user);
                     console.log("user as returned from firestore signin method: ", user);
                     commit("setLoggedInUser", user);
                     result = `Logged in successfully with account ${user.email}`;
@@ -620,7 +613,45 @@ export default createStore({
 
             return result;
         },
+        // signUserInWithToken: async ({ commit }, userAccessToken) => {
+        //     console.log("userAccessToken: ", userAccessToken);
+        //     let result;
+
+        //     // begin loading spinner
+        //     commit("setLoading", true);
+
+        //     // perform firestore action to sign user in with Token
+        //     await signInWithCustomToken(firebaseAuth, userAccessToken)
+        //         .then((userCredential) => {
+        //             // stop loading spinner
+        //             commit("setLoading", false);
+
+        //             const user = userCredential.user;
+        //             console.log(
+        //                 "user as returned from firestore signin method with stored token: ",
+        //                 user
+        //             );
+        //             commit("setLoggedInUser", user);
+        //             result = `Logged in successfully with account ${user.email}`;
+        //         })
+        //         .catch((error) => {
+        //             // stop loading spinner
+        //             commit("setLoading", false);
+        //             const errorCode = error.code;
+        //             const errorMessage = error.message;
+        //             console.log("errorCode: ", errorCode);
+        //             console.log("errorMessage: ", errorMessage);
+        //             result = errorMessage;
+
+        //             // save error message to error property in store
+        //             commit("setError", result);
+        //         });
+        // },
+        resetTabsForDemo: async ({ commit, state }) => {
+            state.store.alltabs = state.store.resetDemoTabsTo;
+            // TODO: upload to firebase here
+        },
     },
 
-    // Define your mutations, actions, getters, etc. here
+    // The end of Vue Store
 });

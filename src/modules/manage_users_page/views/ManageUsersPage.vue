@@ -25,6 +25,7 @@
                 </v-row>
 
                 <!-- Users Listing -->
+
                 <div class="table-container">
                     <v-table>
                         <thead>
@@ -48,6 +49,13 @@
                             </tr>
                         </tbody>
                     </v-table>
+                    <div class="demo-text hint-text">
+                        <p @click="resetTabsForDemo" ref="resetText">
+                            Note: This is only an example list with hard coded user data. At this
+                            point I have not yet implemented the full user management functionality.
+                            Only logging in and creating a user is supported at this time.
+                        </p>
+                    </div>
                 </div>
             </v-col>
         </v-row>
@@ -75,7 +83,7 @@ export default {
                     userId: "13685",
                     forename: "Emily",
                     surname: "Smith",
-                    role: "User",
+                    role: "Till User",
                     dateCreated: "11/10/2023",
                     openTabs: "2",
                 },
@@ -83,7 +91,7 @@ export default {
                     userId: "13686",
                     forename: "Michael",
                     surname: "Johnson",
-                    role: "User",
+                    role: "Till User",
                     dateCreated: "11/10/2023",
                     openTabs: "1",
                 },
@@ -96,6 +104,7 @@ export default {
                     openTabs: "3",
                 },
             ],
+            dKeyPressed: false,
         };
     },
     methods: {
@@ -107,6 +116,26 @@ export default {
                 this.showSuccess = false;
             }, 4000);
         },
+        resetTabsForDemo() {
+            if (this.dKeyPressed) this.$store.dispatch("resetTabsForDemo");
+        },
+    },
+    mounted() {
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "d") {
+                this.dKeyPressed = true;
+            }
+        });
+        document.addEventListener("keyup", (event) => {
+            if (event.key === "d") {
+                this.dKeyPressed = false;
+            }
+        });
+    },
+    // Optional: Remove the key event listeners when the component is destroyed
+    beforeDestroy() {
+        document.removeEventListener("keydown", this.keyDownHandler);
+        document.removeEventListener("keyup", this.keyUpHandler);
     },
 };
 </script>
