@@ -1,4 +1,7 @@
-# vue-router-showcase
+# Till Master (Vue + Firestore)
+A simple till management app built using VueJS, the Vue Router and VueX store. Firestore used for the backend data storage and user management.
+Features include user login, creating a user, creating of "Tabs" and adding products to tabs (all synced to firestore in real time)
+Accessible [here](https://till-master.netlify.app)
 
 ## Project setup
 ```
