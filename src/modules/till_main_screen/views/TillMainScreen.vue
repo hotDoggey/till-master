@@ -24,7 +24,7 @@
         </div>
 
         <!-- Right Main Container -->
-        <div class="singe-tab-details" v-if="selectedTabId">
+        <div class="singe-tab-details">
             <single-tab-view :selectedTabId="selectedTabId">
                 <!-- remember you can use slots
                 <template v-slot:namedSlot>
@@ -47,7 +47,6 @@
             -->
             </single-tab-view>
         </div>
-        <div class="single-tab-details" v-else></div>
     </div>
 
     <!-- Create Tab Popup -->
@@ -118,8 +117,9 @@ export default {
 <style scoped>
 .page-container {
     display: flex;
-    height: 800px;
-    overflow-y: hidden; /* hide main scrollbar */
+    height: 98%;
+    /* height: 800px; */
+    /* overflow-y: hidden; hide main scrollbar */
 }
 
 /* Left Container */
@@ -136,7 +136,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 10px; /* Adjust the gap between the list and create tab button */
-    height: 93.5%;
+    height: 100%;
     justify-content: space-between; /* make create tab button floating at the bottom */
 }
 .tabs-list {

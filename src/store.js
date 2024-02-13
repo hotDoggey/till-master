@@ -355,6 +355,14 @@ export default createStore({
 
         // clear global error message
         clearError: (state) => (state.error = null),
+        deleteItemFromTab: (state, payload) => {
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            // delete item
+            tab.items = tab.items.filter((item) => item.itemId !== payload.itemId);
+            state.selectedItemId = 0; // clear selected item id if its been deleted
+        },
 
         // // change quantity of an item in a tab (zero will remove it)
         // changeItemQuantity: (state, payload) => {
@@ -407,16 +415,60 @@ export default createStore({
 
             // create a refrence to the document we want to update later in the firestore
             const docRef = doc(firestoreDB, "tabs", payload.tabId);
-            console.log("payload: ", payload);
 
             // Firestore action to set data there
             let statusMessage = await dispatch("updateFirestoreTab", {
                 docRef: docRef,
                 newItems: tab.items,
             });
-
-            console.log("payload: ", payload);
         },
+
+        // change quantity of an item in a tab (zero will remove it)
+        changeItemQuantity: async ({ commit, dispatch, state }, payload) => {
+            // find the tab we are editing
+            let tab = state.allTabs.find((x) => x.id === payload.tabId);
+
+            // create a refrence to the document we want to update later in the firestore
+            const docRef = doc(firestoreDB, "tabs", payload.tabId);
+            console.log("payload: ", payload);
+
+            // delete item if zero
+            if (payload.newQuantity === 0) {
+                // delete the item from the tab first, then dispatch an update with the new items array
+                commit("deleteItemFromTab", payload);
+
+                // Firestore action to set data there
+                let statusMessage = await dispatch("updateFirestoreTab", {
+                    docRef: docRef,
+                    newItems: tab.items,
+                });
+                console.log("statusMessage: ", statusMessage);
+            }
+            //change to new quant
+            else if (payload.newQuantity > 0) {
+                // change quantity
+                commit("changeItemQuantity", payload);
+                // Firestore action to set data there
+                let statusMessage = await dispatch("updateFirestoreTab", {
+                    docRef: docRef,
+                    newItems: tab.items,
+                });
+                console.log("statusMessage: ", statusMessage);
+            } else {
+                // Set error message
+                state.error = "Invalid value passed to changeItemQuantity() action";
+            }
+        },
+
+        // An imporvement would be to not update on each user action but use a x-second timer to reduce number of api calls. Would do it as follows:
+        // changeItemQuantity: async ({ commit, state }, payload) => {
+        // TODO: on the tab level, have a property changesNeedsSendingToFirestore,
+        // toggle this to true once a change is made and start 5s timer. timer is
+        // reset to 5s each time there is a change in the tab. if timer reaches 0, then
+        // action below is tirggered to update any tabs with that property set to True
+        //
+        // add a blocking popup from chrome on exit of page to stop exit if there are still commits to be done!
+        // },
 
         // Action that is triggered by the onSnapshot method in App.vue that updates the allTabs property every time data is changed in firestore
         updateTabsFromFSSnapshot: async ({ commit, state }, snapshot) => {
@@ -483,51 +535,6 @@ export default createStore({
                 });
             return statusMessage;
         },
-
-        // change quantity of an item in a tab (zero will remove it)
-        changeItemQuantity: async ({ commit, dispatch, state }, payload) => {
-            // find the tab we are editing
-            let tab = state.allTabs.find((x) => x.id === payload.tabId);
-
-            // create a refrence to the document we want to update later in the firestore
-            const docRef = doc(firestoreDB, "tabs", payload.tabId);
-            console.log("payload: ", payload);
-
-            // delete item if zero
-            if (payload.newQuantity === 0) {
-                commit("deleteItemFromTab", payload);
-                // Firestore action to set data there
-                let statusMessage = await dispatch("updateFirestoreTab", {
-                    docRef: docRef,
-                    newItems: tab.items,
-                });
-                console.log("statusMessage: ", statusMessage);
-            }
-            //change to new quant
-            else if (payload.newQuantity > 0) {
-                // change quantity
-                commit("changeItemQuantity", payload);
-                // Firestore action to set data there
-                let statusMessage = await dispatch("updateFirestoreTab", {
-                    docRef: docRef,
-                    newItems: tab.items,
-                });
-                console.log("statusMessage: ", statusMessage);
-            } else {
-                // Set error message
-                state.error = "Invalid value passed to changeItemQuantity() action";
-            }
-        },
-
-        // An imporvement would be to not update on each user action but user a x-second timer to reduce number of api calls. Would do it as follows:
-        // changeItemQuantity: async ({ commit, state }, payload) => {
-        // TODO: on the tab level, have a property changesNeedsSendingToFirestore,
-        // toggle this to true once a change is made and start 5s timer. timer is
-        // reset to 5s each time there is a change in the tab. if timer reaches 0, then
-        // action below is tirggered to update any tabs with that property set to True
-        //
-        // add a blocking popup from chrome on exit of page to stop exit if there are still commits to be done!
-        // },
 
         // Action to create a user in firestore
         createUser: async ({ commit, state }, payload) => {
@@ -597,6 +604,9 @@ export default createStore({
                     console.log("user as returned from firestore signin method: ", user);
                     commit("setLoggedInUser", user);
                     result = `Logged in successfully with account ${user.email}`;
+
+                    // clear any error messages from the error property in store
+                    commit("clearError");
                 })
                 .catch((error) => {
                     // stop loading spinner

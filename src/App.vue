@@ -4,7 +4,7 @@
         <!-- wrapping with a vuetify app tag -->
         <!-- router-view is where the content of each component page is displayed, 
             as nav is separate it will always be shown at the top of all pages -->
-        <router-view class="prevent-text-selection" />
+        <router-view class="prevent-text-selection dynamic-size" />
     </v-app>
     <!-- <PageFooter
     id="page-footer"
@@ -78,6 +78,8 @@ export default {
     overflow-y: auto;
 }
 #app {
+    min-height: 90%;
+    max-height: 90%;
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -107,8 +109,8 @@ button:hover {
     background-color: var(--secondary-color-D);
 }
 
-#app {
-    min-height: 100vh;
+.dynamic-size {
+    height: 100%;
 }
 
 #page-footer {

@@ -5,8 +5,7 @@
             <div class="lia-text">Logged in as: <br /></div>
             <div class="user-email">
                 {{ loggedInUserEmail }}<br />
-                <!-- Logged in as: <br />David Jones 184678430 <br /> -->
-                <!-- Logged in as: <br />{{ loggedInUserFullName }} {{ loggedInUserId }} -->
+                <!-- Logged in as: <br />{{ loggedInUserFullName }} {{ loggedInUserEmail }} -->
             </div>
         </div>
 

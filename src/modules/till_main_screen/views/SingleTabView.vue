@@ -1,6 +1,5 @@
 <template>
-    <div class="singe-tab-details-container">
-        <!-- {{ selectedTabId }} -->
+    <div class="singe-tab-details-container" v-if="selectedTabId">
         <div class="tab-details">
             <!-- Container1 -->
             <div class="container1 visual-border">
@@ -13,7 +12,9 @@
                     >
                         <img :src="item.itemImgURL" :alt="item.name" class="menu-item-img" />
                         <div class="menu-item-title">{{ item.name }}</div>
-                        <div class="menu-item-price">{{ displayableStrFromPrice(item.price) }}</div>
+                        <div class="menu-item-price">
+                            {{ displayableStrFromPrice(item.price) }}
+                        </div>
                     </div>
                 </div>
 
@@ -51,6 +52,12 @@
                             {{ item.quantity }}
                         </div>
                     </div>
+                    <p
+                        class="allow-text-selection"
+                        v-if="currentTab.items.length > 0 && !selectedItemId"
+                    >
+                        hint: Click on an item for additional options
+                    </p>
                 </div>
                 <v-spacer></v-spacer>
                 <div class="tab-total-text pb-2">Total: £{{ getTotalTabValue }}</div>
@@ -74,8 +81,8 @@
             </div>
             <!-- Close Tab Button -->
             <!-- <div class="action-btn" @click="createTabPopupOpen = true">
-                <font-awesome-icon class="icon-pad-right" icon="sack-dollar" />Close Tab
-            </div> -->
+            <font-awesome-icon class="icon-pad-right" icon="sack-dollar" />Close Tab
+        </div> -->
             <!-- Delete Tab Button -->
             <div class="action-btn" @click="deleteTab">
                 <font-awesome-icon class="icon-pad-right" icon="trash" />Delete Tab
@@ -104,7 +111,13 @@ export default {
         };
     },
     watch: {
-        // clicking to a new tab needs to reset the numpad popup
+        // clicking to a new tab needs to hide the numpad and unselect the selected item
+        selectedTabId(newTabId, oldTabId) {
+            this.showQuantityNumpad = false;
+            this.newSelectedItemInTab(0); // reset the selected item once a new tab is opened or loaded
+        },
+
+        // selecting a new item should hide the numpad
         selectedItemId(newId, oldId) {
             if (newId === 0) this.showQuantityNumpad = false;
         },
@@ -115,7 +128,6 @@ export default {
         },
         // get the currently selected tab using the ID from the prop and by looking at the store
         currentTab() {
-            this.newSelectedItemInTab(0); // reset the selected item once a new tab is opened or loaded
             return this.$store.getters.tabDetailsById(this.selectedTabId);
         },
         getTotalTabValue() {

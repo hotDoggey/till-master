@@ -27,7 +27,7 @@
         </v-row>
     </v-container>
 
-    <div class="demo-text hint-text">
+    <div class="demo-text hint-text allow-text-selection">
         <p>Demo version. Use the following details to login and view the rest of the system:</p>
         <p>Username: test_admin_user123@example.com</p>
         <p>Password: 123456</p>
