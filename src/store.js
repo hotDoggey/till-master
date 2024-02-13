@@ -481,7 +481,7 @@ export default createStore({
                 };
                 newAllTabs.push(payload);
             });
-            console.log("newAllTabs: ", newAllTabs);
+            // console.log("newAllTabs: ", newAllTabs);
             state.allTabs = newAllTabs;
 
             if (state.initalLoad) {
